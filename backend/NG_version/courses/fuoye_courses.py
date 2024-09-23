@@ -1,0 +1,1 @@
+fuoye_courses_ = None
