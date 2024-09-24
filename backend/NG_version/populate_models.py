@@ -30,6 +30,42 @@ from models import(
     FuoyeCourses
 )
 
+# Insert universities into the database
+for uni_data in universities_dict:
+    university = Universities(
+        id=uni_data["id"],
+        name=uni_data["name"],
+        year=uni_data["aggr_year"],
+        olevel_for_aggr=uni_data["olevel for aggr"],
+        total_post_utme=uni_data["total post utme"],
+    )
+    session.add(university)
+
+# Commit the universities
+session.commit()
+
+# Insert about information for each university
+for uni in about_uni_dict:
+    university = session.query(Universities).filter_by(
+        name=uni['name']).first()
+
+    if university:
+        new_about_entry = About(
+            university_id=university.id,
+            name=uni['name'],
+            location=uni['location'],
+            established=uni['established'],
+            description=uni['description']
+        )
+        session.add(new_about_entry)
+
+# Commit the about information
+session.commit()
+
+# Close session
+session.close()
+
+
 # a helper function that helps create courses table for each university
 def insert_uni_courses(session, uni_name, uni_class, courses_dict):
     try:
@@ -62,13 +98,19 @@ def insert_uni_courses(session, uni_name, uni_class, courses_dict):
 
 # create a courses table for each university
 uni_details_dict = {
+    "University of Ibadan (UI)": (UiCourses, ui_courses_),
     "University of Lagos (UNILAG)": (UnilagCourses, unilag_courses_),
+    "University of Nigeria, Nsukka (UNN)": (UnnCourses, unn_courses_),
     "Obafemi Awolowo University (OAU)": (OauCourses, oau_courses_),
+    "Ahmadu Bello University (ABU)": (AbuCourses, abu_courses_),
+    "University of Ilorin (UNILORIN)": (UnilorinCourses, unilorin_courses_),
+    "Federal University of Technology, Akure (FUTA)": (FutaCourses, futa_courses_),
+    "Nnamdi Azikiwe University (UNIZIK)": (UnizikCourses, unizik_courses_),
     "University of Benin (UNIBEN)": (UnibenCourses, uniben_courses_),
+    "Federal University Oye Ekiti (FUOYE)": (FuoyeCourses, fuoye_courses_),
 }
 
 # Iterate over the dictionary and call the function
 for university, (course_class, course_data) in uni_details_dict.items():
     if course_data is not None:
         insert_uni_courses(Session(), university, course_class, course_data)
-

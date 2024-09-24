@@ -117,10 +117,11 @@ class FuoyeCourses(BaseUniCourses):
     universities = relationship("Universities", back_populates="fuoye_courses")
 
 # Create the tables
-try:
-    Base.metadata.create_all(engine)  # Creates all tables based on the Base models
-    print("Tables created successfully!")
-except Exception as e:
-    print(f"Error creating tables: {e}")
+if __name__ == '__main__':
+    try:
+        Base.metadata.create_all(engine)  # Creates all tables based on the Base models
+        print("Tables created successfully!")
+    except Exception as e:
+        print(f"Error creating tables: {e}")
 
 session = Session()

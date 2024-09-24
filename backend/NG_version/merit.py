@@ -132,3 +132,4 @@ class University:
     def exit(self):
         """Exits the program."""
         sys.exit("Thanks for using Merit")
+

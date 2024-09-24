@@ -179,13 +179,12 @@ def get_uni_id(universities):
 
     for uni in universities:
         if uni["name"] == uni_name:
-            # 1 was added to solve indexing issues
-            uni_id = universities.index(uni) + 1
+            uni_id = uni["id"]
 
-    # I substracted 1 from the id here to prevent errors
-    # but 1 will be added later
+    # One was substracted 1 for indexing into the universities list of dicts
     if not universities[uni_id - 1]["courses"]:
         return None
+
     return uni_id
 
 
@@ -210,9 +209,11 @@ def get_the_class_instance(universities):
 
     """puts the id in string format to support indexing into the dictionary."""
     uni_id_str = str(uni_id)
+    
     _class = uni_classes[uni_id_str]
 
     _class_instance = _class(uni_id)
+ 
 
     return _class_instance
 

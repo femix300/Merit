@@ -115,3 +115,83 @@
 # for university, (course_class, course_data) in uni_details_dict.items():
 #     if course_data is not None:
 #         insert_uni_courses(Session(), university, course_class, course_data)
+
+
+# from models import Session, UiCourses, Universities
+
+# def list_faculties_and_courses(university_id):
+#     # Create a new session
+#     with Session() as session:
+#         # Query the university to ensure it exists
+#         university = session.query(Universities).filter_by(id=university_id).first()
+        
+#         if not university:
+#             print("University not found.")
+#             return
+        
+#         # Query all courses for the specified university
+#         courses = session.query(UiCourses).filter_by(university_id=university_id).all()
+        
+#         # Organize courses by faculty
+#         faculty_courses = {}
+#         for course in courses:
+#             faculty_courses.setdefault(course.faculty, []).append(course.name)
+
+#         # Print the university name and faculties with courses
+#         print(
+#             "List of faculties under {} with their "
+#             "respective Departments:".format(university.name)
+#         )
+#         phrase_len = len(university.name) + len(
+#             "List of faculties under  with their respective Departments:"
+#         )
+#         print("=" * phrase_len)
+
+#         for faculty, courses in faculty_courses.items():
+#             print(faculty)
+#             print("=" * len(faculty))
+#             for i, course in enumerate(courses, start=1):
+#                 print("{}. {}".format(i, course))
+#             print()  # Add an extra line for better spacing
+
+# # Example usage
+# university_id = 1  # Replace with the actual ID of the University of Ibadan (UI)
+# list_faculties_and_courses(university_id)
+
+# def get_courses_by_university_id(university_id):
+#     # Create a new session
+#     with Session() as session:
+#         # Check if the university_id is valid and get the corresponding course class
+#         course_class = university_courses_map.get(university_id)
+#         if not course_class:
+#             print("Invalid university ID.")
+#             return None
+
+#         # Query the courses for the specified university_id
+#         courses = session.query(course_class).filter_by(university_id=university_id).all()
+#         return courses
+
+# # Example usage
+# university_id = 1  # Example: ID for University of Ibadan (UI)
+# courses = get_courses_by_university_id(university_id)
+# course_list = []
+# if courses is not None:
+#     for course in courses:
+#         print(f"{course.id}. {course.name}")
+
+# print(course_list)
+
+#If you want to return a list of course names (or other course details)
+
+# Query to get the university description
+# university_name = "University of Ibadan (UI)"  # Change to the desired university name
+# result = session.query(Universities, About).join(About).filter(Universities.name == university_name).first()
+
+# if result:
+#     university, about_info = result
+#     print(f"Description for {university.name}: {about_info.description}")
+# else:
+#     print(f"No information found for {university_name}")
+
+# Close the session
+
