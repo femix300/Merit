@@ -31,22 +31,16 @@ class Unn(University):
         )
 
     @classmethod
-    def calculate_olevel(cls):
+    def calculate_olevel(cls, grades=[]):
+        grade_list = grades.split(',')
         total = 0
-        for i in range(4):
-            grade = pyip.inputMenu(
-                list(Unn.unn_olevel.keys()),
-                numbered=True,
-                prompt="Enter grade for subject({}): \n".format(i + 1),
-            ).upper()
+        for grade in grade_list:
             total += cls.unn_olevel[grade]["value"]
-
         return round(total, 3)
 
     @classmethod
-    def calculate_aggregate(cls):
-        olevel = Unn.calculate_olevel()
-        utme = pyip.inputInt("Enter UTME score: ", min=180, max=400)
+    def calculate_aggregate(cls, utme, grades):
+        olevel = Unn.calculate_olevel(grades)
         aggregate = (olevel * 0.2) + (utme * 0.8)
         return round(aggregate, 4)
 

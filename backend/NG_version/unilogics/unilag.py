@@ -31,28 +31,21 @@ class Unilag(University):
         )
 
     @classmethod
-    def calculate_olevel(cls):
+    def calculate_olevel(cls, grades=[]):
+        grade_list = grades.split(',')
         total = 0
-        for i in range(5):
-            grade = pyip.inputMenu(
-                list(Unilag.unilag_olevel.keys()),
-                numbered=True,
-                prompt="Enter grade for subject({}): \n".format(i + 1),
-            ).upper()
+        for grade in grade_list:
             total += cls.unilag_olevel[grade]["value"]
         return round(total, 3)
 
     @classmethod
-    def calculate_aggregate(cls):
-        olevel = Unilag.calculate_olevel()
-        utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
-        post_utme = pyip.inputInt("Enter POST UTME score: ", min=0, max=30)
+    def calculate_aggregate(cls, utme, post_utme, grades=[]):
+        olevel = Unilag.calculate_olevel(grades)
         aggregate = olevel + (utme * 0.125) + post_utme
         return round(aggregate, 4)
 
     @classmethod
-    def calculate_required_post_utme_score(cls, course_aggregate):
-        olevel = Unilag.calculate_olevel()
-        utme = pyip.inputInt("Enter UTME score: ", min=180, max=400)
+    def calculate_required_post_utme_score(cls, course_aggregate, utme, grades=[]):
+        olevel = Unilag.calculate_olevel(grades)
         post_utme = course_aggregate - ((utme * 0.125) + olevel)
         return post_utme

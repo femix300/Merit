@@ -124,14 +124,14 @@
 #     with Session() as session:
 #         # Query the university to ensure it exists
 #         university = session.query(Universities).filter_by(id=university_id).first()
-        
+
 #         if not university:
 #             print("University not found.")
 #             return
-        
+
 #         # Query all courses for the specified university
 #         courses = session.query(UiCourses).filter_by(university_id=university_id).all()
-        
+
 #         # Organize courses by faculty
 #         faculty_courses = {}
 #         for course in courses:
@@ -181,7 +181,7 @@
 
 # print(course_list)
 
-#If you want to return a list of course names (or other course details)
+# If you want to return a list of course names (or other course details)
 
 # Query to get the university description
 # university_name = "University of Ibadan (UI)"  # Change to the desired university name
@@ -195,3 +195,13 @@
 
 # Close the session
 
+# Ui
+# utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
+# post_utme = pyip.inputInt("Enter POST UTME score: ", min=0, max=100)
+
+
+# add into universities table these columns
+# - post utme passmark
+# - no of grades needed
+# - uni class
+# -

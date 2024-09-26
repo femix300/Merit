@@ -209,11 +209,10 @@ def get_the_class_instance(universities):
 
     """puts the id in string format to support indexing into the dictionary."""
     uni_id_str = str(uni_id)
-    
+
     _class = uni_classes[uni_id_str]
 
     _class_instance = _class(uni_id)
- 
 
     return _class_instance
 
@@ -242,7 +241,7 @@ def entry_point(universities, _class_instance):
         "Display list of courses":
         _class_instance.list_courses,
         "Display Faculties and Courses":
-        _class_instance.display_faculties_and_courses,
+        _class_instance.get_faculties_and_courses,
         "Display all Universities": _class_instance.display_universities,
         "Exit": _class_instance.exit,
     }
@@ -262,8 +261,11 @@ def entry_point(universities, _class_instance):
             break
 
         selected_option = options[choice]
-
-        selected_option()
+        if choice == "Get the required score to study your dream course":
+            aggr = selected_option("DENTISTRY")
+            print(f'Aggregate = {aggr}')
+        else:
+            selected_option()
 
 
 print("\n===============================Home===============================\n")

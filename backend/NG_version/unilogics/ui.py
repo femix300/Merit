@@ -22,14 +22,11 @@ class Ui(University):
         )
 
     @classmethod
-    def calculate_aggregate(cls):
-        utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
-        post_utme = pyip.inputInt("Enter POST UTME score: ", min=0, max=100)
+    def calculate_aggregate(cls, utme, post_utme):
         aggregate = (utme * 0.125) + (post_utme * 0.5)
         return round(aggregate, 4)
 
     @classmethod
-    def calculate_required_post_utme_score(cls, course_aggregate):
-        utme = pyip.inputInt("Enter UTME score: ", min=180, max=400)
+    def calculate_required_post_utme_score(cls, course_aggregate, utme):
         post_utme = (course_aggregate - (utme * 0.125)) / 0.5
         return post_utme

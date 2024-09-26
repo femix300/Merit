@@ -107,5 +107,3 @@ universities = [
         "total post utme": None,
     },
 ]
-
-

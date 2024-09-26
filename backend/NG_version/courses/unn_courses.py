@@ -361,6 +361,7 @@ unn_courses_ = {
     },
 }
 
+
 '''
 faculties = [] 
 for course, details in unn_courses_.items():

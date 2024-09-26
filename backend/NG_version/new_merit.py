@@ -99,7 +99,7 @@ class University:
                 )
 
                 self.disclaimer_info()
-                return course_aggregate                
+                return course_aggregate
 
     def list_courses(self):
         """Lists out all the courses offered in a selected university."""

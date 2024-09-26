@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Recommendation Form</title>
+    <script>
+        async function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const uniId = document.getElementById('uni_id').value;
+            const courseName = document.getElementById('course_name').value;
+            const grades = document.getElementById('grades').value.split(',').map(Number);
+
+            const response = await fetch('/calculate_aggregate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ uni_id: uniId, course_name: courseName, grades: grades })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h1>Course Recommendation Form</h1>
+    <form onsubmit="submitForm(event)">
+        <label for="uni_id">University ID:</label><br>
+        <input type="text" id="uni_id" name="uni_id" required><br>
+
+        <label for="course_name">Course Name:</label><br>
+        <input type="text" id="course_name" name="course_name" required><br>
+
+        <label for="grades">Grades (comma-separated):</label><br>
+        <input type="text" id="grades" name="grades" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+</body>
+</html>

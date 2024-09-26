@@ -18,6 +18,8 @@ engine = create_engine(
 Session = sessionmaker(bind=engine)
 
 # Define the models
+
+
 class Universities(Base):
     __tablename__ = 'universities'
 
@@ -47,6 +49,7 @@ class Universities(Base):
         "UnibenCourses", back_populates="universities")
     fuoye_courses = relationship("FuoyeCourses", back_populates="universities")
 
+
 class About(Base):
     __tablename__ = 'about_universities'
 
@@ -60,6 +63,7 @@ class About(Base):
 
     universities = relationship("Universities", back_populates="about_uni")
 
+
 class BaseUniCourses(Base):
     __abstract__ = True
 
@@ -72,54 +76,66 @@ class BaseUniCourses(Base):
     def university_id(cls):
         return Column(Integer, ForeignKey('universities.id'), nullable=False)
 
+
 class UiCourses(BaseUniCourses):
     __tablename__ = 'ui_courses'
     universities = relationship("Universities", back_populates="ui_courses")
+
 
 class UnilagCourses(BaseUniCourses):
     __tablename__ = 'unilag_courses'
     universities = relationship(
         "Universities", back_populates="unilag_courses")
 
+
 class UnnCourses(BaseUniCourses):
     __tablename__ = 'unn_courses'
     universities = relationship("Universities", back_populates="unn_courses")
+
 
 class OauCourses(BaseUniCourses):
     __tablename__ = 'oau_courses'
     universities = relationship("Universities", back_populates="oau_courses")
 
+
 class AbuCourses(BaseUniCourses):
     __tablename__ = 'abu_courses'
     universities = relationship("Universities", back_populates="abu_courses")
+
 
 class UnilorinCourses(BaseUniCourses):
     __tablename__ = 'unilorin_courses'
     universities = relationship(
         "Universities", back_populates="unilorin_courses")
 
+
 class FutaCourses(BaseUniCourses):
     __tablename__ = 'futa_courses'
     universities = relationship("Universities", back_populates="futa_courses")
+
 
 class UnizikCourses(BaseUniCourses):
     __tablename__ = 'unizik_courses'
     universities = relationship(
         "Universities", back_populates="unizik_courses")
 
+
 class UnibenCourses(BaseUniCourses):
     __tablename__ = 'uniben_courses'
     universities = relationship(
         "Universities", back_populates="uniben_courses")
 
+
 class FuoyeCourses(BaseUniCourses):
     __tablename__ = 'fuoye_courses'
     universities = relationship("Universities", back_populates="fuoye_courses")
 
+
 # Create the tables
 if __name__ == '__main__':
     try:
-        Base.metadata.create_all(engine)  # Creates all tables based on the Base models
+        # Creates all tables based on the Base models
+        Base.metadata.create_all(engine)
         print("Tables created successfully!")
     except Exception as e:
         print(f"Error creating tables: {e}")

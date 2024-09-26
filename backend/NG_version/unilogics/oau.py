@@ -31,28 +31,21 @@ class Oau(University):
         )
 
     @classmethod
-    def calculate_olevel(cls):
+    def calculate_olevel(cls, grades=[]):
+        grade_list = grades.split(',')
         total = 0
-        for i in range(5):
-            grade = pyip.inputMenu(
-                list(Oau.oau_olevel.keys()),
-                numbered=True,
-                prompt="Enter grade for subject({}): \n".format(i + 1),
-            ).upper()
+        for grade in grade_list:
             total += cls.oau_olevel[grade]["value"]
         return round(total, 3)
 
     @classmethod
-    def calculate_aggregate(cls):
-        olevel = Oau.calculate_olevel()
-        utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
-        post_utme = pyip.inputInt("Enter POST UTME score: ", min=25, max=40)
+    def calculate_aggregate(cls, utme, post_utme, olevel=[]):
+        olevel = Oau.calculate_olevel(olevel)
         aggregate = olevel + (utme * 0.125) + post_utme
         return round(aggregate, 4)
 
     @classmethod
-    def calculate_required_post_utme_score(cls, course_aggregate):
-        olevel = Oau.calculate_olevel()
-        utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
+    def calculate_required_post_utme_score(cls, course_aggregate, utme, grades=[]):
+        olevel = Oau.calculate_olevel(grades)
         post_utme = course_aggregate - ((utme * 0.125) + olevel)
         return post_utme

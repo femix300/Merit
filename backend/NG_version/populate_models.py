@@ -13,7 +13,7 @@ from courses.fuoye_courses import fuoye_courses_
 
 from sqlalchemy.exc import IntegrityError
 
-from models import(
+from models import (
     Universities,
     Session,
     session,
@@ -42,6 +42,24 @@ for uni_data in universities_dict:
     session.add(university)
 
 # Commit the universities
+session.commit()
+
+# Insert about information for each university
+for uni in about_uni_dict:
+    university = session.query(Universities).filter_by(
+        name=uni['name']).first()
+
+    if university:
+        new_about_entry = About(
+            university_id=university.id,
+            name=uni['name'],
+            location=uni['location'],
+            established=uni['established'],
+            description=uni['description']
+        )
+        session.add(new_about_entry)
+
+# Commit the about information
 session.commit()
 
 # Insert about information for each university
