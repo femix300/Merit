@@ -19,7 +19,7 @@ universities = [
     {
         "id": 1,
         "name": "University of Ibadan (UI)",
-        "about": about_uni[0]["description"],
+        "about": about_uni[0],
         "aggr_year": "2021/2022",
         "courses": ui_courses_,
         "olevel for aggr": False,
@@ -28,7 +28,7 @@ universities = [
     {
         "id": 2,
         "name": "University of Lagos (UNILAG)",
-        "about": about_uni[1]["description"],
+        "about": about_uni[1],
         "aggr_year": "2022/2023",
         "courses": unilag_courses_,
         "olevel for aggr": True,
@@ -37,7 +37,7 @@ universities = [
     {
         "id": 3,
         "name": "University of Nigeria, Nsukka (UNN)",
-        "about": about_uni[2]["description"],
+        "about": about_uni[2],
         "aggr_year": "2022/2023",
         "courses": unn_courses_,
         "olevel for aggr": True,
@@ -46,7 +46,7 @@ universities = [
     {
         "id": 4,
         "name": "Obafemi Awolowo University (OAU)",
-        "about": about_uni[3]["description"],
+        "about": about_uni[3],
         "aggr_year": "2022/2023",
         "courses": oau_courses_,
         "olevel for aggr": True,
@@ -55,7 +55,7 @@ universities = [
     {
         "id": 5,
         "name": "Ahmadu Bello University (ABU)",
-        "about": about_uni[4]["description"],
+        "about": about_uni[4],
         "aggr_year": None,
         "courses": abu_courses_,
         "olevel for aggr": None,
@@ -64,7 +64,7 @@ universities = [
     {
         "id": 6,
         "name": "University of Ilorin (UNILORIN)",
-        "about": about_uni[5]["description"],
+        "about": about_uni[5],
         "aggr_year": None,
         "courses": unilorin_courses_,
         "olevel for aggr": None,
@@ -73,7 +73,7 @@ universities = [
     {
         "id": 7,
         "name": "Federal University of Technology, Akure (FUTA)",
-        "about": about_uni[6]["description"],
+        "about": about_uni[6],
         "aggr_year": "2022/2023",
         "courses": futa_courses_,
         "olevel for aggr": False,
@@ -82,7 +82,7 @@ universities = [
     {
         "id": 8,
         "name": "Nnamdi Azikiwe University (UNIZIK)",
-        "about": about_uni[7]["description"],
+        "about": about_uni[7],
         "aggr_year": "2022/2023",
         "courses": unizik_courses_,
         "olevel for aggr": False,
@@ -91,7 +91,7 @@ universities = [
     {
         "id": 9,
         "name": "University of Benin (UNIBEN)",
-        "about": about_uni[8]["description"],
+        "about": about_uni[8],
         "aggr_year": "2022/2023",
         "courses": uniben_courses_,
         "olevel for aggr": False,
@@ -100,7 +100,7 @@ universities = [
     {
         "id": 10,
         "name": "Federal University Oye Ekiti (FUOYE)",
-        "about": about_uni[9]["description"],
+        "about": about_uni[9],
         "aggr_year": None,
         "courses": fuoye_courses_,
         "olevel for aggr": None,

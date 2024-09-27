@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Universities, About, Session, session
 import sys
 import pyinputplus as pyip
+from collections import defaultdict
 
 from models import (
     Universities,
@@ -32,6 +33,16 @@ university_courses_map = {
     8: UnizikCourses,
     9: UnibenCourses,
     10: FuoyeCourses
+}
+
+uni_classes = {
+    "University of Ibadan": UiCourses,
+    "University of Lagos": UnilagCourses,
+    "University of Nigeria": UnnCourses,
+    "Obafemi Awolowo University": OauCourses,
+    "Federal University of Technology Akure": FutaCourses,
+    "Nnamdi Azikiwe University": UnizikCourses,
+    "University of Benin": UnibenCourses,
 }
 
 
@@ -68,38 +79,31 @@ class University:
         course_class = university_courses_map.get(uni_id)
         courses = session.query(course_class).filter_by(
             university_id=uni_id).all()
-        return courses
-
-    def get_course_aggregate(self):
-        courses = self.get_courses()
         if courses:
-            course_list = []
-            for course in courses:
-                course_list.append(course.name)
+            return courses
+        return None
+    
+    def get_faculty(self, course):
+        """Returns the faculty of a given course"""
+        courses = self.get_courses()
+        for _course in courses:
+            if course == _course.name:
+                return _course.faculty
+        return None
 
-            print("\nSelect your dream course!\n")
-            course_of_ch = pyip.inputMenu(
-                course_list,
-                numbered=True,
-                prompt="Please enter one of the following "
-                "(course name or serial number): \n",
-            )
 
-            print("\nYou selected {}\n".format(course_of_ch))
-            for course in courses:
-                if course.name == course_of_ch:
-                    course_aggregate = course.aggregate
+    def get_course_aggregate(self, _course):
+        """Get the aggregate score of a selected course using MySQL."""
+        courses = self.get_courses()
 
-            if course_aggregate:
-                uni = self.get_uni()
-                print(
-                    "In order to study {} at {} you need to achieve "
-                    "an aggregate score of {}".format(
-                        course_of_ch, uni.name, course_aggregate)
-                )
+        if not courses:
+            return None
 
-                self.disclaimer_info()
-                return course_aggregate
+        for course in courses:
+            if course.name == _course:
+                return course.aggregate
+
+        return None
 
     def list_courses(self):
         """Lists out all the courses offered in a selected university."""
@@ -111,34 +115,18 @@ class University:
         for course in courses:
             print("{}. {}".format(course.id, course.name))
 
-    def display_faculties_and_courses(self):
-        """Displays all the faculties and courses under
-        them in a selected university."""
+    def get_faculties_and_courses(self):
+        """Fetches all the faculties and courses under
+        them for the selected university."""
         courses = self.get_courses()
-        uni = self.get_uni()
-
+        
         if courses:
-            faculty_courses = {}
+            faculty_courses = defaultdict(list)
             for course in courses:
-                faculty_courses.setdefault(
-                    course.faculty, []).append(course.name)
-            print(
-                "List of faculties under {} with their "
-                "respective Departments:".format(uni.name)
-            )
-            phrase_len = len(uni.name) + len(
-                "List of faculties under  with their respective Departments:"
-            )
-            print("=" * phrase_len)
-
-            for faculty, courses in faculty_courses.items():
-                print(faculty)
-                print("=" * len(faculty))
-                for i, course in enumerate(courses, start=1):
-                    print("{}. {}".format(i, course))
-                print()
+                faculty_courses[course.faculty].append(course.name)
+            return dict(faculty_courses)
         else:
-            print("Pending...")
+            return None
 
     def display_name(self):
         """Prints out the name of a selected university."""
@@ -148,13 +136,13 @@ class University:
             print("{}".format(uni_name))
 
     def about_uni(self):
-        """Displays information about a selected university."""
+        """Returns information about a selected university."""
         uni = self.get_uni()
-        self.display_name()
         about = session.query(About).join(Universities).filter(
             Universities.name == uni.name).first()
         if about:
-            print(about.description)
+            return about
+        return None
 
     def disclaimer_info(self):
         """Prints disclaimer info."""

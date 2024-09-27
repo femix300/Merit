@@ -22,14 +22,11 @@ class Unizik(University):
         )
 
     @classmethod
-    def calculate_aggregate(cls):
-        utme = pyip.inputInt("Enter UTME score: ", min=200, max=400)
-        post_utme = pyip.inputInt("Enter POST UTME score: ", min=0, max=100)
+    def calculate_aggregate(cls, utme, post_utme):
         aggregate = (utme) + (post_utme * 4) / 2
         return round(aggregate, 4)
 
     @classmethod
-    def calculate_required_post_utme_score(cls, course_aggregate):
-        utme = pyip.inputInt("Enter UTME score: ", min=180, max=400)
+    def calculate_required_post_utme_score(cls, course_aggregate, utme):
         post_utme = ((2 * course_aggregate) - (utme)) / 4
         return post_utme

@@ -14,8 +14,13 @@ from universities import universities
 # i could have a column fpr pass mark(post_utme)
 uni_dict = {uni['name']: uni['id'] for uni in universities}
 not_support_post_utme = [3, 5, 6, 10]
+
+
+
+utme_postutme = [1, 7, 8, 9]
 utme_postutme_olevel = [2, 4]
 utme_olevel = [3]
+
 grades_needed = {
     2: 5,
     3: 4,
@@ -51,7 +56,25 @@ def use_merit():
 
 @app.route('/universities/courses', methods=['GET'])
 def get_universities_offering_course():
-    """Returns a list of universities that offer a specific course"""
+    """
+    Returns a list of universities that offer a specific course.
+
+    This endpoint accepts a GET request with a query parameter `course_name`
+    and returns a JSON response containing a list of universities that offer
+    the specified course.
+
+    Query Parameters:
+        course_name (str): The name of the course to search for.
+
+    Returns:
+        JSON response:
+            - If the `course_name` parameter is missing, returns a 400 status
+              code with an error message.
+            - If no universities offer the specified course, returns a 404
+              status code with a message.
+            - Otherwise, returns a 200 status code with a JSON object containing
+              the course name and a list of universities offering the course.
+    """
     course = request.args.get('course_name')
     if not course:
         return jsonify({"error": "course_name parameter is required"}), 400
@@ -100,6 +123,28 @@ def list_functions():
 
 @app.route('/evaluations/recommendations', methods=['POST', 'GET'])
 def calculate_evaluate_recommend():
+    """
+    Calculates and evaluates a student's eligibility for a specific course at a selected university.
+
+    This endpoint accepts both POST and GET requests with query parameters to calculate the student's
+    aggregate score and determine their eligibility for a specific course. It also recommends other
+    courses within the same faculty for which the student is qualified.
+
+    Query Parameters:
+        course_name (str): The name of the course to evaluate.
+        utme_score (int): The student's UTME score.
+        post_utme_score (int): The student's post-UTME score.
+        grades (str): Comma-separated O-level grades (if required by the university).
+
+    Returns:
+        JSON response:
+            - If any required parameter is missing, returns a 400 status code with an error message.
+            - If the specified course is not offered at the selected university, returns a 404 status
+              code with a message.
+            - Otherwise, returns a 200 status code with a JSON object containing the evaluation results,
+              including the course name, course aggregate, student's aggregate, university name,
+              university ID, faculty, and other courses the student is qualified for.
+    """
     # selected_university = session.get('selected_university')
     selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
@@ -191,6 +236,27 @@ def calculate_evaluate_recommend():
 
 @app.route('/post-utme/requirements', methods=['GET'])
 def determine_required_post_utme_score():
+    """
+    Determines the required post-UTME score for a specific course at a selected university.
+
+    This endpoint accepts a GET request with query parameters to calculate the required post-UTME
+    score for a student based on their UTME score and, if applicable, O-level grades.
+
+    Query Parameters:
+        course_name (str): The name of the course to evaluate.
+        utme_score (int): The student's UTME score.
+        grades (str): Comma-separated O-level grades (if required by the university).
+
+    Returns:
+        JSON response:
+            - If any required parameter is missing, returns a 400 status code with an error message.
+            - If the specified course is not offered at the selected university, returns a 404 status
+              code with a message.
+            - If the calculation is not supported at the selected university, returns a 404 status
+              code with a message.
+            - Otherwise, returns a 200 status code with a JSON object containing the required post-UTME
+              score, course name, post-UTME mark, pass mark, university name, and university ID.
+    """
     # selected_university = session.get('selected_university')
     selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
@@ -256,7 +322,23 @@ def determine_required_post_utme_score():
 
 @app.route('/aggregates/requirements', methods=['GET'])
 def get_required_aggregate():
-    selected_university = "University of Nigeria, Nsukka (UNN)"
+    """
+    Retrieves the required aggregate score for a specific course at a selected university.
+
+    This endpoint accepts a GET request with a query parameter `course_name` to retrieve the
+    required aggregate score for the specified course at the selected university.
+
+    Query Parameters:
+        course_name (str): The name of the course to retrieve the aggregate score for.
+
+    Returns:
+        JSON response:
+            - If the `course_name` parameter is missing, returns a 400 status code with an error message.
+            - If the course or its aggregate score is not found, returns a 404 status code with an error message.
+            - Otherwise, returns a 200 status code with a JSON object containing the course name, university name,
+              university ID, and the required aggregate score for the course.
+    """
+    selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
 
     course = request.args.get('course_name')
@@ -282,7 +364,18 @@ def get_required_aggregate():
 
 @app.route('/universities/description', methods=['GET'])
 def about_university():
-    selected_university = "University of Lagos (UNILAG)"
+    """
+    Retrieves detailed information about a selected university.
+
+    This endpoint accepts a GET request and returns detailed information about the selected university,
+    including its name, ID, location, establishment year, and description.
+
+    Returns:
+        JSON response:
+            - A JSON object containing the university's name, ID, location, establishment year,
+              and description.
+    """
+    selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
 
     _class_instance = create_class_instance(uni_id)
@@ -291,7 +384,9 @@ def about_university():
     result = {
         "Univerity name": selected_university,
         "university id": uni_id,
-        "university description": about_uni
+        "location": about_uni["location"],
+        "established": about_uni["established"],
+        "university description": about_uni["description"]
     }
 
     return jsonify(result)
@@ -299,6 +394,16 @@ def about_university():
 
 @app.route('/universities/list/courses', methods=['GET'])
 def display_list_of_courses():
+    """
+    Retrieves a list of courses offered by a selected university.
+
+    This endpoint accepts a GET request and returns a list of courses offered by the selected university,
+    along with the university's name and ID.
+
+    Returns:
+        JSON response:
+            - A JSON object containing the university's name, ID, and a list of courses offered by the university.
+    """
     selected_university = "University of Lagos (UNILAG)"
     uni_id = uni_dict[selected_university]
 
@@ -316,6 +421,22 @@ def display_list_of_courses():
 
 @app.route('/course/faculty', methods=['GET'])
 def get_faculty():
+    """
+    Retrieves the faculty of a specific course at a selected university.
+
+    This endpoint accepts a GET request with a query parameter `course_name` to retrieve the faculty
+    to which the specified course belongs at the selected university.
+
+    Query Parameters:
+        course_name (str): The name of the course to retrieve the faculty for.
+
+    Returns:
+        JSON response:
+            - If the `course_name` parameter is missing, returns a 400 status code with an error message.
+            - If the course or its faculty is not found, returns a 404 status code with an error message.
+            - Otherwise, returns a 200 status code with a JSON object containing the university name,
+              university ID, course name, and the faculty to which the course belongs.
+    """
     selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
     course = request.args.get('course_name')
@@ -341,6 +462,17 @@ def get_faculty():
 
 @app.route('/universities/faculties/courses', methods=['GET'])
 def display_faculties_and_courses():
+    """
+    Retrieves a list of faculties and their respective courses offered by a selected university.
+
+    This endpoint accepts a GET request and returns a list of faculties and the courses offered under
+    each faculty at the selected university, along with the university's name and ID.
+
+    Returns:
+        JSON response:
+            - A JSON object containing the university's name, ID, and a dictionary where the keys are
+              faculty names and the values are lists of courses offered by each faculty.
+    """
     selected_university = "Obafemi Awolowo University (OAU)"
     uni_id = uni_dict[selected_university]
 

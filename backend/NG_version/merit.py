@@ -8,7 +8,8 @@ import pyinputplus as pyip
 class University:
     universities = universities
 
-    """Initializes a university with an id."""
+    """Initializes a university with an id.
+    This is a parent class for all universities"""
 
     def __init__(self, id):
         self.id = id

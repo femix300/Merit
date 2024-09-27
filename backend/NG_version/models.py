@@ -28,6 +28,13 @@ class Universities(Base):
     year = Column(String(50), nullable=False)
     olevel_for_aggr = Column(Boolean, nullable=True)
     total_post_utme = Column(Integer, nullable=True)
+    post_utme_passmark = Column(Integer, nullable=True)
+    olevel_subjects = Column(Integer, nullable=True)
+    uni_class = Column(String(50), nullable=True)
+    require_olevel = Column(Boolean, default=False, nullable=True)
+    utme_postutme = Column(Boolean, default=False, nullable=True)
+    utme_postutme_olevel = Column(Boolean, default=False, nullable=True)
+    utme_olevel = Column(Boolean, default=False, nullable=True)
 
     about_uni = relationship(
         "About", back_populates="universities", cascade="all, delete-orphan")
@@ -131,13 +138,13 @@ class FuoyeCourses(BaseUniCourses):
     universities = relationship("Universities", back_populates="fuoye_courses")
 
 
-# Create the tables
-if __name__ == '__main__':
-    try:
-        # Creates all tables based on the Base models
-        Base.metadata.create_all(engine)
-        print("Tables created successfully!")
-    except Exception as e:
-        print(f"Error creating tables: {e}")
+# # Create the tables
+# if __name__ == '__main__':
+#     try:
+#         # Creates all tables based on the Base models
+#         Base.metadata.create_all(engine)
+#         print("Tables created successfully!")
+#     except Exception as e:
+#         print(f"Error creating tables: {e}")
 
 session = Session()
