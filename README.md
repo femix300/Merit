@@ -1,5 +1,5 @@
 
-# Merit Admission Recommendation API
+# Merit API
 
 This project is a backend system for the **Merit** web application, which was built to aid students in their admission process into tetiary Institutions. 
 
