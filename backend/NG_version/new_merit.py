@@ -82,7 +82,7 @@ class University:
         if courses:
             return courses
         return None
-    
+
     def get_faculty(self, course):
         """Returns the faculty of a given course"""
         courses = self.get_courses()
@@ -90,7 +90,6 @@ class University:
             if course == _course.name:
                 return _course.faculty
         return None
-
 
     def get_course_aggregate(self, _course):
         """Get the aggregate score of a selected course using MySQL."""
@@ -119,7 +118,7 @@ class University:
         """Fetches all the faculties and courses under
         them for the selected university."""
         courses = self.get_courses()
-        
+
         if courses:
             faculty_courses = defaultdict(list)
             for course in courses:

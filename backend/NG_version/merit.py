@@ -37,9 +37,11 @@ class University:
     def get_faculty(self, course):
         """Returns the faculty of a given course"""
         uni_index = self.get_uni_index()
-        course_faculty = universities[uni_index].get(
-            "courses")[f"{course}"]["faculty"]
-        return course_faculty
+        if course in self.get_courses():
+            course_faculty = universities[uni_index].get(
+                "courses")[f"{course}"]["faculty"]
+            return course_faculty
+        return None
 
     def get_course_aggregate(self, _course):
         """Get's the aggregate score to a selected course."""

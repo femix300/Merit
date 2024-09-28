@@ -10,11 +10,11 @@ import sys
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
 
+
 # more details to be added to mysql database for easy querying
 # i could have a column fpr pass mark(post_utme)
 uni_dict = {uni['name']: uni['id'] for uni in universities}
-not_support_post_utme = [3, 5, 6, 10]
-
+not_support_post_utme = [3]
 
 
 utme_postutme = [1, 7, 8, 9]
@@ -226,7 +226,7 @@ def calculate_evaluate_recommend():
         "course": course,
         "course aggregate": course_aggr,
         "student's aggregate": stu_aggr,
-        "University's name": selected_university,
+        "university name": selected_university,
         "university id": uni_id,
         "faculty": course_faculty,
         "other courses qualified for": qualified_to_study
@@ -258,7 +258,7 @@ def determine_required_post_utme_score():
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
     # selected_university = session.get('selected_university')
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = "Federal University of Technology, Akure (FUTA)"
     uni_id = uni_dict[selected_university]
     index = uni_id - 1
 
@@ -291,6 +291,10 @@ def determine_required_post_utme_score():
     pass_mark = post_utme_mark / 2
 
     course_aggr = _class_instance.get_course_aggregate(course)
+
+    if uni_id in not_support_post_utme:
+        return jsonify({
+            "message": f"This feature is currently unavailable for {selected_university}."}), 404
 
     if uni_id in utme_postutme_olevel:
         required_score = _class_instance.calculate_required_post_utme_score(
@@ -419,6 +423,7 @@ def display_list_of_courses():
 
     return jsonify(result)
 
+
 @app.route('/course/faculty', methods=['GET'])
 def get_faculty():
     """
@@ -443,7 +448,7 @@ def get_faculty():
 
     if not course:
         return jsonify({"error": "course_name parameter is required"}), 400
-    
+
     # create class instance
     _class_instance = create_class_instance(uni_id)
     faculty = _class_instance.get_faculty(course)
@@ -460,6 +465,7 @@ def get_faculty():
 
     return jsonify(result)
 
+
 @app.route('/universities/faculties/courses', methods=['GET'])
 def display_faculties_and_courses():
     """
@@ -473,13 +479,12 @@ def display_faculties_and_courses():
             - A JSON object containing the university's name, ID, and a dictionary where the keys are
               faculty names and the values are lists of courses offered by each faculty.
     """
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = "University of Ibadan (UI)"
     uni_id = uni_dict[selected_university]
 
     # create class instance
     _class_instance = create_class_instance(uni_id)
     faculties_data = _class_instance.get_faculties_and_courses()
-
 
     result = {
         "University name": selected_university,

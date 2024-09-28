@@ -270,7 +270,7 @@ def determine_required_post_utme_score():
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
     # selected_university = session.get('selected_university')
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = "University of Nigeria, Nsukka (UNN)"
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
     uni = _class_instance.get_uni()
@@ -302,6 +302,11 @@ def determine_required_post_utme_score():
             return jsonify({"error": "grades parameter is required"}), 400
 
     course_aggr = _class_instance.get_course_aggregate(course)
+
+    # for schools who don't use post utme
+    if uni.utme_olevel:
+        return jsonify({
+            "message": f"This feature is currently unavailable for {selected_university}."}), 404
 
     if uni.utme_postutme_olevel:
         required_score = _class_instance.calculate_required_post_utme_score(

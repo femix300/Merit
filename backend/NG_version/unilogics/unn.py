@@ -46,4 +46,4 @@ class Unn(University):
 
     @classmethod
     def calculate_required_post_utme_score(cls, course_aggregate):
-        return None
+        return "Currently unavailable"
