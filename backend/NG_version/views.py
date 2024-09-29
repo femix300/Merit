@@ -9,6 +9,7 @@ import pyinputplus as pyip
 import sys
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
+from flask_cors import CORS
 
 
 # more details to be added to mysql database for easy querying
@@ -46,6 +47,9 @@ def create_class_instance(uni_id):
 
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 
 @app.route('/merit', methods=['GET'])
