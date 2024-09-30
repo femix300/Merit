@@ -5,11 +5,12 @@ from unilogics.unn import Unn
 from unilogics.unilag import Unilag
 from unilogics.oau import Oau
 from unilogics.ui import Ui
-import pyinputplus as pyip
-import sys
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
+import os
+import google.generativeai as genai
 
+from chat_model import history, model
 
 # more details to be added to mysql database for easy querying
 # i could have a column fpr pass mark(post_utme)
@@ -52,7 +53,6 @@ app = Flask(__name__)
 def use_merit():
     """Home Page"""
     return render_template('index.html')
-
 
 @app.route('/universities/courses', methods=['GET'])
 def get_universities_offering_course():
@@ -494,6 +494,28 @@ def display_faculties_and_courses():
 
     return jsonify(result)
 
+# AI chatbot
+@app.route("/merit.ai", methods=['GET'])
+def home():
+    return render_template('chatbot.html')
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message", "")
+
+    chat_session = model.start_chat(
+        history=history
+    )
+
+    response = chat_session.send_message(user_input)
+    model_response = response.text
+
+    # Save the conversation in history
+    history.append({"role": "user", "parts": [user_input]})
+    history.append({"role": "model", "parts": [model_response]})
+
+    return jsonify({"response": model_response})
 
 if __name__ == '__main__':
     app.run(debug=True)

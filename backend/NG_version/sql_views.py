@@ -270,7 +270,7 @@ def determine_required_post_utme_score():
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
     # selected_university = session.get('selected_university')
-    selected_university = "University of Nigeria, Nsukka (UNN)"
+    selected_university = "Federal University of Technology, Akure (FUTA)"
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
     uni = _class_instance.get_uni()
