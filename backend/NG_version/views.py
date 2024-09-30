@@ -7,8 +7,12 @@ from unilogics.oau import Oau
 from unilogics.ui import Ui
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
+
 import os
 import google.generativeai as genai
+
+from flask_cors import CORS
+
 
 from chat_model import history, model
 
@@ -47,6 +51,9 @@ def create_class_instance(uni_id):
 
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 
 @app.route('/merit', methods=['GET'])
