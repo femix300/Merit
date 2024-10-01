@@ -9,6 +9,9 @@ from n_unilogics.ui import Ui
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
 from models import session as sql_session
+from new_merit import university_courses_map
+
+from chat_model import history, model
 
 from models import (
     Universities,
@@ -162,8 +165,10 @@ def calculate_evaluate_recommend():
               including the course name, course aggregate, student's aggregate, university name,
               university ID, faculty, and other courses the student is qualified for.
     """
-    # selected_university = session.get('selected_university')
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
 
@@ -269,8 +274,10 @@ def determine_required_post_utme_score():
             - Otherwise, returns a 200 status code with a JSON object containing the required post-UTME
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
-    # selected_university = session.get('selected_university')
-    selected_university = "Federal University of Technology, Akure (FUTA)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
     uni = _class_instance.get_uni()
@@ -357,7 +364,10 @@ def get_required_aggregate():
             - Otherwise, returns a 200 status code with a JSON object containing the course name, university name,
               university ID, and the required aggregate score for the course.
     """
-    selected_university = "University of Nigeria, Nsukka (UNN)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
 
@@ -392,7 +402,10 @@ def about_university():
             - A JSON object containing the university's name, ID, location, establishment year,
               and description.
     """
-    selected_university = "University of Nigeria, Nsukka (UNN)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
     about = _class_instance.about_uni()
@@ -420,7 +433,10 @@ def display_list_of_courses():
         JSON response:
             - A JSON object containing the university's name, ID, and a list of courses offered by the university.
     """
-    selected_university = "University of Lagos (UNILAG)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
 
@@ -454,7 +470,10 @@ def get_faculty():
             - Otherwise, returns a 200 status code with a JSON object containing the university name,
               university ID, course name, and the faculty to which the course belongs.
     """
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
 
@@ -491,7 +510,10 @@ def display_faculties_and_courses():
             - A JSON object containing the university's name, ID, and a dictionary where the keys are
               faculty names and the values are lists of courses offered by each faculty.
     """
-    selected_university = "Obafemi Awolowo University (OAU)"
+    selected_university = request.args.get('university_name')
+    if not selected_university:
+        return jsonify({"error": "university_name parameter is missing"}), 400
+
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
 
@@ -504,6 +526,51 @@ def display_faculties_and_courses():
     }
 
     return jsonify(result)
+
+
+@app.route("/universities/list")
+def list_universities():
+    """Returns the list of supported universities"""
+    universities = sql_session.query(Universities).all()
+
+    uni_list = []
+
+    for uni in universities:
+        course_class = university_courses_map.get(uni.id)
+        if course_class:
+            courses = sql_session.query(course_class).filter_by(university_id=uni.id).all()
+            if courses:
+                uni_list.append(uni.name)
+
+    result = {
+        "Supported Universities": uni_list
+    }
+
+    return jsonify(result)
+
+
+# AI chatbot
+@app.route("/merit.ai", methods=['GET'])
+def home():
+    return render_template('chatbot.html')
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message", "")
+
+    chat_session = model.start_chat(
+        history=history
+    )
+
+    response = chat_session.send_message(user_input)
+    model_response = response.text
+
+    # Save the conversation in history
+    history.append({"role": "user", "parts": [user_input]})
+    history.append({"role": "model", "parts": [model_response]})
+
+    return jsonify({"response": model_response})
 
 
 if __name__ == '__main__':
