@@ -283,9 +283,45 @@ Retrieves a list of faculties and their respective courses offered by a selected
   }
 
 
+## GET /universities/list
+Retrieves the list of supported universities.
+
+This endpoint returns a list of universities currently supported by the application, filtered to include only those with available courses.
+
+**Response Example:**
+- `200 OK`:
+    ```json
+    {
+    "Supported Universities": [
+        "University of Ibadan (UI)",
+        "University of Lagos (UNILAG)",
+        "University of Nigeria, Nsukka (UNN)",
+        "Obafemi Awolowo University (OAU)",
+        "Federal University of Technology, Akure (FUTA)",
+        "Nnamdi Azikiwe University (UNIZIK)",
+        "University of Benin (UNIBEN)"
+    ]
+    }
+
+
+## GET /merit.ai
+Renders the AI chatbot interface.
+
+This endpoint serves the HTML page where users can interact with the AI chatbot. It accepts a GET request to load the chatbot UI.
+**Response Examples:**
+- `200 OK`:
+
+The chatbot interface allowing users to enter queries and receive responses.
+
+
+## POST /chat
+Handles user input and provides AI chatbot responses.
+
+This endpoint accepts user messages through a POST request, interacts with an AI model, and returns the chatbot's response. The conversation history is stored for reference.
+
+
 ## Additional Information
 
-- **Testing**: Run tests using `pytest` for any logic validation.
 - **Frontend Integration**: The frontend can interact with the backend using JavaScript's `fetch()` or Axios for making HTTP requests to the Flask API.
 
 If you have any questions or issues, feel free to contact the project maintainers.
