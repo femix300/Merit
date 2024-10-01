@@ -530,7 +530,16 @@ def display_faculties_and_courses():
 
 @app.route("/universities/list")
 def list_universities():
-    """Returns the list of supported universities"""
+    """
+    Retrieves the list of supported universities.
+
+    This endpoint returns a list of universities currently supported by the application, filtered to 
+    include only those with available courses.
+
+    Returns:
+        JSON response:
+            - A JSON object containing a list of university names that offer courses.
+    """
     universities = sql_session.query(Universities).all()
 
     uni_list = []
@@ -538,7 +547,8 @@ def list_universities():
     for uni in universities:
         course_class = university_courses_map.get(uni.id)
         if course_class:
-            courses = sql_session.query(course_class).filter_by(university_id=uni.id).all()
+            courses = sql_session.query(course_class).filter_by(
+                university_id=uni.id).all()
             if courses:
                 uni_list.append(uni.name)
 
@@ -552,11 +562,35 @@ def list_universities():
 # AI chatbot
 @app.route("/merit.ai", methods=['GET'])
 def home():
+    """
+    Renders the AI chatbot interface.
+
+    This endpoint serves the HTML page where users can interact with the AI chatbot. 
+    It accepts a GET request to load the chatbot UI.
+
+    Returns:
+        HTML page:
+            - The chatbot interface allowing users to enter queries and receive responses.
+    """
     return render_template('chatbot.html')
 
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    """
+    Handles user input and provides AI chatbot responses.
+
+    This endpoint accepts user messages through a POST request, interacts with an AI model, 
+    and returns the chatbot's response. The conversation history is stored for reference.
+
+    Request:
+        JSON request body:
+            - "message" (str): The user input to be processed by the AI chatbot.
+
+    Returns:
+        JSON response:
+            - A JSON object containing the AI model's response to the user's message.
+    """
     user_input = request.json.get("message", "")
 
     chat_session = model.start_chat(

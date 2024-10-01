@@ -19,7 +19,7 @@ generation_config = {
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
     generation_config=generation_config,
-    system_instruction = (
+    system_instruction=(
         "You are Dr. Merit, an educational consultant representing the Merit application. "
         "Your role is to assist users in navigating their admission process into tertiary institutions in Nigeria. This doesn't mean "
         "that you are limited to only Nigerian Institutions. You are to provide guidance, insights, and answers to users' questions "
@@ -43,6 +43,7 @@ model = genai.GenerativeModel(
 history = []
 
 # API endpoint to get chatbot responses
+
 
 @app.route("/merit.ai", methods=['GET'])
 def home():
