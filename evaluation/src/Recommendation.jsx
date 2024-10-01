@@ -1,44 +1,183 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./recommendation.css";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
 function Recommendation() {
-    const [university, setUniversity] = useState("");
-    const [utme_score, setUtme_score] = useState();
-    const [postUtme_score, setPostUtme_score] = useState();
-    const [olevel, setOlevel] = useState("");
-    const [data, setData] = useState(null); // State to store fetched data
+    const [universities, setUniversities] = useState([]); // List of universities
+    const [university, setUniversity] = useState(""); // Selected university
+    const [courses, setCourses] = useState([]); // List of courses based on selected university
+    const [selectedCourse, setSelectedCourse] = useState(""); // Selected course
+    const [utme_score, setUtme_score] = useState(); // UTME score
+    const [utmeError, setUtmeError] = useState(""); // State for UTME score error message
+    const [postUtme_score, setPostUtme_score] = useState(); // Post UTME score
+    const [postUtmeError, setPostUtmeError] = useState(""); // State for Post UTME score error message
+    const [maxPostUtmeScore, setMaxPostUtmeScore] = useState(100); // Maximum Post UTME score
+    const [olevel, setOlevel] = useState(""); // Olevel grades
+    const [data, setData] = useState(null); // Fetched data
     const [loading, setLoading] = useState(false); // Loading state
     const [error, setError] = useState(""); // Error state
 
+
+    // Fetch the university list when the component mounts
+    useEffect(() => {
+        const fetchUniversities = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${BASE_URL}/universities/list`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch universities');
+                }
+                const result = await response.json();
+                const universitiesList = result["Supported Universities"] || [];
+                setUniversities(universitiesList); // Set the universities in state
+            } catch (error) {
+                console.error('Error fetching universities:', error);
+                setError("Failed to load universities");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUniversities();
+    }, []); // Run on mount
+
+    // Fetch max Post UTME score when a university is selected
+    const fetchPostUtmeRequirements = async (selectedUniversity) => {
+        try {
+            const response = await fetch(`${BASE_URL}/post-utme/requirements?university_name=${encodeURIComponent(selectedUniversity)}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch Post UTME requirements');
+            }
+            const result = await response.json();
+            setMaxPostUtmeScore(result["post utme mark"]); // Set the maximum Post UTME score
+        } catch (error) {
+            console.error('Error fetching Post UTME requirements:', error);
+        }
+    };
+
+    // Fetch courses when a university is selected
+    const fetchCourses = async (selectedUniversity) => {
+        if (!selectedUniversity) {
+            console.error('No university selected!');
+            setCourses([]); // Reset courses if no university is selected
+            return; // Exit the function early if no university is selected
+        }
+    
+        setLoading(true);
+        setCourses([]); // Reset courses when fetching new ones
+        try {
+            const url = `${BASE_URL}/universities/list/courses?university_name=${encodeURIComponent(selectedUniversity)}`;
+            const response = await fetch(url);
+    
+            if (!response.ok) {
+                const errorMessage = await response.text(); // Get the error response body
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorMessage}`);
+            }
+    
+            const result = await response.json();
+            setCourses(result["List of courses"] || []); // Correct key to access courses
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+            setError("Failed to load courses");
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    // Update university and fetch courses
     const updateUniversity = (event) => {
-        setUniversity(event.target.value);
+        const selectedUniversity = event.target.value;
+        setUniversity(selectedUniversity); // Set the selected university
+        fetchCourses(selectedUniversity); // Fetch courses for the selected university
     };
+
+    // Update selected course
+    const updateCourse = (event) => {
+        setSelectedCourse(event.target.value); // Update the selected course
+    };
+
+    // Update UTME score
     const updateUtme_score = (event) => {
-        setUtme_score(event.target.value);
+        const value = event.target.value;
+
+        // Allow empty input for clearing the field
+        if (value === '') {
+            setUtme_score(''); // Set to empty string to clear
+            setUtmeError(''); // Clear error message when input is empty
+            return;
+        }
+
+        // Convert value to a number
+        const numberValue = Number(value);
+
+        // Update state only if the value is valid
+        if (numberValue >= 0 && numberValue <= 400) {
+            setUtme_score(numberValue.toString()); // Convert to string for controlled input
+            setUtmeError(''); // Clear error message if valid
+        } else {
+            setUtmeError('Invalid input'); // Set error message if invalid
+        }
     };
+
+    // Handle blur event to validate the score
+    const handleBlur = () => {
+        const numberValue = Number(utme_score); // Convert the current score to a number
+        if (numberValue < 0 || numberValue > 400) {
+            setUtmeError('Invalid input');
+        }
+    };
+
+    // Update Post UTME score
     const updatePostUtme_score = (event) => {
-        setPostUtme_score(event.target.value);
+        const value = event.target.value;
+
+        // Allow empty input for clearing the field
+        if (value === '') {
+            setPostUtme_score('');
+            setPostUtmeError(''); // Clear error message when input is empty
+            return;
+        }
+
+        // Convert value to a number
+        const numberValue = Number(value);
+
+        // Update state only if the value is valid
+        if (numberValue >= 0 && numberValue <= maxPostUtmeScore) {
+            setPostUtme_score(numberValue);
+            setPostUtmeError(''); // Clear error message if valid
+        } else {
+            setPostUtmeError('Invalid input'); // Set error message if invalid
+        }
     };
+
+    // Handle blur event to validate the score
+    const handlePostUtmeBlur = () => {
+        if (postUtme_score < 0 || postUtme_score > maxPostUtmeScore) {
+            setPostUtmeError('Invalid input');
+        }
+    };
+
+
+    // Update Olevel grades
     const updateOlevel = (event) => {
         setOlevel(event.target.value);
     };
 
     const handleSubmit = async () => {
-        setLoading(true); // Start loading when fetching begins
-        setError(""); // Reset error before the fetch starts
+        setLoading(true);
+        setError(""); // Reset error before fetch
 
         try {
-            // Construct the query parameters
+            // Construct query parameters for the recommendation
             const queryParams = new URLSearchParams({
-                course_name: "MEDICINE", // Assuming MEDICINE is the course
+                course_name: selectedCourse || courses[0], // Use the selected course or the first course if none is selected
                 utme_score: utme_score,
                 post_utme_score: postUtme_score,
                 grades: olevel,
+                university_name: university, // Use the selected university
             }).toString();
 
-            // Fetch data using query parameters
             const response = await fetch(`${BASE_URL}/evaluations/recommendations?${queryParams}`, {
                 method: 'GET',
                 headers: {
@@ -50,7 +189,6 @@ function Recommendation() {
                 throw new Error('Failed to fetch data');
             }
 
-            // Process the response data
             const result = await response.json();
             setData(result); // Store the fetched data in state
         } catch (error) {
@@ -65,32 +203,82 @@ function Recommendation() {
             <div className="form-wrap">
                 <div className="university-course-input">
                     <div className="university-select">
-                        <select onChange={updateUniversity}>
-                            <option value="">select university</option>
-                            <option value="oau">Obafemi Awolowo University</option>
-                            <option value="unilag">University of Lagos</option>
-                            <option value="unn">University of Nigeria Nsukka</option>
-                            <option value="futa">Federal University of Technology Akure</option>
-                            <option value="uniben">University of Benin</option>
-                            <option value="unizik">unizik</option>
-                            <option value="ui">University of Ibadan</option>
+                        <select onChange={updateUniversity} value={university}>
+                            <option value="">Select University</option>
+                            {universities.length > 0 ? (
+                                universities.map((uni, index) => (
+                                    <option key={index} value={uni}>
+                                        {uni}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Loading universities...</option>
+                            )}
                         </select>
                     </div>
                     <div className="course-select">
-                        <select>
-                            <option value="SOFTWARE ENGINEERING">SOFTWARE ENGINEERING</option>
+                        <select onChange={updateCourse} value={selectedCourse}>
+                            <option value="">Select Course</option>
+                            {courses.length > 0 ? (
+                                courses.map((course, index) => (
+                                    <option key={index} value={course}>
+                                        {course}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Loading courses...</option>
+                            )}
                         </select>
                     </div>
                 </div>
                 <div className="score-inputs">
                     <label>
-                        UTME score<br />
-                        <input type="number" onChange={updateUtme_score} />
+                        UTME Score<br />
+                        <input 
+                            type="number" 
+                            min="0" 
+                            max="400" 
+                            onChange={updateUtme_score} 
+                            onBlur={handleBlur} // Validate on blur
+                            value={utme_score} // Controlled input, which will now be a string or empty
+                            onKeyDown={(e) => {
+                                // Prevent typing invalid characters
+                                if (
+                                    (e.key < '0' || e.key > '9') && 
+                                    e.key !== 'Backspace' && 
+                                    e.key !== 'ArrowLeft' && 
+                                    e.key !== 'ArrowRight'
+                                ) {
+                                    e.preventDefault();
+                                }
+                            }}
+                        />
+                        {utmeError && <p style={{ color: 'red' }}>{utmeError}</p>} {/* Display error message */}
                     </label>
 
                     <label>
-                        Post UTME score<br />
-                        <input type="number" onChange={updatePostUtme_score} />
+                        Post UTME Score<br />
+                        <input 
+                            type="number" 
+                            min="0" 
+                            max={maxPostUtmeScore} // Limit max value to maxPostUtmeScore
+                            onChange={updatePostUtme_score} 
+                            onBlur={handlePostUtmeBlur} // Validate on blur
+                            value={postUtme_score || ''} // Controlled input
+                            onKeyDown={(e) => {
+                                // Prevent typing invalid characters
+                                if (
+                                    (e.key < '0' || e.key > '9') && 
+                                    e.key !== 'Backspace' && 
+                                    e.key !== 'ArrowLeft' && 
+                                    e.key !== 'ArrowRight' &&
+                                    e.key !== 'Tab'
+                                ) {
+                                    e.preventDefault();
+                                }
+                            }}
+                        />
+                        {postUtmeError && <p className="error-message">{postUtmeError}</p>}
                     </label>
                     <label className="olevel-input">
                         Olevel grade separated by commas (e.g A1,B2,B3,C4,A1)<br />
@@ -103,13 +291,8 @@ function Recommendation() {
             </div>
 
             <div className="evaluation">
-                {/* Loading state */}
                 {loading && <p>Loading...</p>}
-
-                {/* Error state */}
                 {error && <p>{error}</p>}
-
-                {/* Evaluation results */}
                 {data && !loading && !error && (
                     <div>
                         <h2>Evaluation Results</h2>
@@ -133,7 +316,6 @@ function Recommendation() {
                                 </tbody>
                             </table>
                         </div>
-
                         {/* Conditionally render other recommended courses */}
                         {Object.keys(data["other courses qualified for"]).length > 0 ? (
                             <div>
@@ -158,7 +340,7 @@ function Recommendation() {
                                 </div>
                             </div>
                         ) : (
-                            <p>No other courses qualified for</p>
+                            <p>No other courses in the faculty qualified for</p>
                         )}
                     </div>
                 )}
