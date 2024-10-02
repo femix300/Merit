@@ -1,4 +1,3 @@
-
 const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8">
@@ -16,20 +15,36 @@ const Footer = () => {
             <h4 className="font-semibold mb-2">Quick Links</h4>
             <ul className="text-gray-400">
               <li className="hover:text-white">
-                <a href="#">Home</a>
+                <a href="/">Home</a>
               </li>
               <li className="hover:text-white">
-                <a href="#">About Us</a>
+                <a href="/about">About Us</a>
               </li>
               <li className="hover:text-white">
                 <a href="#">Services</a>
               </li>
-              <li className="hover:text-white">
-                <a href="#">Universities</a>
-              </li>
-              <li className="hover:text-white">
-                <a href="#">Blog</a>
-              </li>
+              <div className="block py-2 px-4  hover:text-gray-100">
+                <div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="mt-2 space-y-2"
+                >
+                  <a
+                    href="/service/aggregate-calculator"
+                    className="block text-gray-700 hover:text-gray-100"
+                  >
+                    Aggregate calculator
+                  </a>
+
+                  <a
+                    href="/universities-list"
+                    className="block text-gray-700 hover:text-gray-100 "
+                  >
+                    Find dream school
+                  </a>
+                </div>
+              </div>
             </ul>
           </div>
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
