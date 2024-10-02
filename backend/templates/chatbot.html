@@ -25,7 +25,7 @@
         .chat-container {
             width: 900px;
             height: 80vh;
-            background-color: #5ef3f3; /* Background color of the chat container */
+            background-color: #5c48ee; /* Background color of the chat container */
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             padding: 20px;
@@ -50,6 +50,7 @@
             margin: 10px 0;
             padding: 10px;
             border-radius: 20px;
+            font-size: 14px;
             max-width: 75%;
             word-wrap: break-word;
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
@@ -91,11 +92,13 @@
             max-height: 120px; /* Set a maximum height */
             line-height: 1.5; /* Control the line height for better spacing */
             transition: height 0.2s ease; /* Smooth transition for height change */
+            height: auto;
+            min-height: 16px;
         }
 
         button {
             padding: 10px 20px;
-            background-color: black; /* Dark Slate Gray button color */
+            background-color:  black; /* Dark Slate Gray button color */
             color: white; /* Button text color */
             border: none;
             border-radius: 20px;
@@ -134,16 +137,20 @@
             // Format bold and italic text using asterisks
             message = message.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>'); // Bold Italics
             message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
-            message = message.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italics
+            message = message.replace(/\*(.*?)\*/g, '$1'); // Italics
             
             // Replace new lines (\n) with <br> for proper line breaks
             message = message.replace(/\n/g, '<br>');
         
             // Replace bullet points (- or *) with list items (<li> tags)
-            message = message.replace(/^- (.*?)(\n|$)/gm, '<li>$1</li>');
-            
+            message = message.replace(/^[-*] (.*?)(\n|$)/gm, '<li>$1</li>');
+        
+            // Wrap the list items in <ul> tags to create a proper list
+            message = message.replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
+        
             return message;
-        }        
+        }
+               
 
         let isUserAtBottom = true; // Tracks whether the user is at the bottom of the chat
 
@@ -232,9 +239,11 @@
         async function sendMessage() {
             const message = userInput.value.trim(); // Trim whitespace from input
             if (!message) return; // Ignore empty messages
-
+        
             appendMessage("user", message); // Append user message to chat
-
+            userInput.value = ""; // Clear input box immediately
+            autoResizeTextarea.call(userInput); // Reset the height of textarea
+        
             const response = await fetch("/chat", {
                 method: "POST",
                 headers: {
@@ -242,13 +251,11 @@
                 },
                 body: JSON.stringify({ message }),
             });
-
+        
             const data = await response.json();
             appendMessage("bot", data.response); // Append bot message with typing effect
-
-            userInput.value = ""; // Clear input box after message is sent
-            autoResizeTextarea.call(userInput); // Reset the height of textarea
         }
+        
 
         sendButton.addEventListener("click", sendMessage);
 

@@ -35,6 +35,7 @@ university_courses_map = {
     10: FuoyeCourses
 }
 
+# maps university names with their mysql classes
 uni_classes = {
     "University of Ibadan": UiCourses,
     "University of Lagos": UnilagCourses,

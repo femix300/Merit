@@ -1,50 +1,9 @@
-from unilogics.uniben import Uniben
-from unilogics.unizik import Unizik
-from unilogics.futa import Futa
-from unilogics.unn import Unn
-from unilogics.unilag import Unilag
-from unilogics.oau import Oau
-from unilogics.ui import Ui
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from universities import universities
-
 from flask_cors import CORS
-
-
 from chat_model import history, model
+from helper import uni_dict, not_support_post_utme, utme_olevel, utme_postutme, utme_postutme_olevel, grades_needed, create_class_instance
 
-# more details to be added to mysql database for easy querying
-# i could have a column fpr pass mark(post_utme)
-uni_dict = {uni['name']: uni['id'] for uni in universities}
-not_support_post_utme = [3]
-
-
-utme_postutme = [1, 7, 8, 9]
-utme_postutme_olevel = [2, 4]
-utme_olevel = [3]
-
-grades_needed = {
-    2: 5,
-    3: 4,
-    4: 5
-}
-
-uni_classes = {
-    "1": Ui,
-    "2": Unilag,
-    "3": Unn,
-    "4": Oau,
-    "7": Futa,
-    "8": Unizik,
-    "9": Uniben,
-}
-
-
-def create_class_instance(uni_id):
-    uni_id_str = str(uni_id)
-    _class = uni_classes[uni_id_str]
-    _class_instance = _class(uni_id)
-    return _class_instance
 
 
 app = Flask(__name__)

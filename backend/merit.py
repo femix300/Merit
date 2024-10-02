@@ -2,7 +2,6 @@
 from universities import universities
 from collections import defaultdict
 import sys
-import pyinputplus as pyip
 
 
 class University:
@@ -107,3 +106,4 @@ class University:
     def exit(self):
         """Exits the program."""
         sys.exit("Thanks for using Merit")
+
