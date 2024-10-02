@@ -5,12 +5,13 @@ from new_merit import university_courses_map, uni_classes
 from helper import create_class_instance, uni_dict
 from chat_model import history, model
 from models import Universities
+from flask_cors import CORS
 
 from n_helper import create_class_instance, uni_dict, uni_classes
 
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/merit', methods=['GET'])
 def use_merit():

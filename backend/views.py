@@ -12,11 +12,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/merit', methods=['GET'])
-def use_merit():
-    """Home Page"""
-    return render_template('index.html')
-
 
 @app.route('/universities/courses', methods=['GET'])
 def get_universities_offering_course():
@@ -57,34 +52,6 @@ def get_universities_offering_course():
         "Universities offering the course": uni_list
     }
     return jsonify(result)
-
-
-@app.route('/select_university', methods=['GET'])
-def display_university_selection():
-    return render_template('select_university.html')
-
-
-@app.route('/universities/selected', methods=['POST'])
-def select_university():
-    data = request.get_json()
-    university_name = data.get('university_name')
-
-    # store the university name in the session
-    session['selected_university'] = university_name
-
-    return redirect(url_for('list_functions'))
-
-
-@app.route('/merit/functions', methods=['GET'])
-def list_functions():
-    selected_university = session.get('selected_university')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
-
-    if not selected_university:
-        return "No university selected", 400
-
-    return render_template('functions.html', university=selected_university)
 
 
 @app.route('/evaluations/recommendations', methods=['POST', 'GET'])
@@ -226,8 +193,7 @@ def determine_required_post_utme_score():
             - Otherwise, returns a 200 status code with a JSON object containing the required post-UTME
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
-    # selected_university = session.get('selected_university')
-    # selected_university = "Federal University of Technology, Akure (FUTA)"
+
     selected_university = request.args.get('university_name')
     if not selected_university:
         return jsonify({"error": "university_name parameter is missing"}), 400
@@ -315,7 +281,6 @@ def get_required_aggregate():
             - Otherwise, returns a 200 status code with a JSON object containing the course name, university name,
               university ID, and the required aggregate score for the course.
     """
-    # selected_university = "Obafemi Awolowo University (OAU)"
     selected_university = request.args.get('university_name')
     if not selected_university:
         return jsonify({"error": "university_name parameter is missing"}), 400

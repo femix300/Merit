@@ -23,6 +23,9 @@ const Navbar = () => {
             <a href="/" className="text-white hover:text-gray-900">
               Home
             </a>
+            <a href="http://127.0.0.1:5000/merit.ai" className="text-white hover:text-gray-900">
+              Merit AI
+            </a>
 
             {/* Service Dropdown */}
             <div className="relative">
