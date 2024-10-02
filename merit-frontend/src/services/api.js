@@ -7,7 +7,7 @@ const BASE_URL = 'http://127.0.0.1:5000'
 export const fetchUniversitiesByCourse = async (course_name) => {
     try {
         const response = await axios.get(`${BASE_URL}/universities/courses`, {
-            params: {course_name}
+            params: { course_name }
         })
         return response.data
     } catch (error) {
@@ -18,7 +18,7 @@ export const fetchUniversitiesByCourse = async (course_name) => {
 
 //Fetch recommendations based on course, UTME score, etc
 
-export const fetchCourseRecommendations = async (course_name, utme_score, post_utme_score, grades) =>{
+export const fetchCourseRecommendations = async (course_name, utme_score, post_utme_score, grades) => {
     try {
         const response = await axios.post(`${BASE_URL}/evaluations/recommendations`, {
             course_name,
@@ -35,9 +35,9 @@ export const fetchCourseRecommendations = async (course_name, utme_score, post_u
 
 // Fetch post-UTME requirements
 export const fetchPostUtmeRequirements = async (course_name, utme_score, grades) => {
-    try{
+    try {
         const response = await axios.get(`${BASE_URL}/post-utme/requirements`, {
-            params: {course_name, utme_score, grades}
+            params: { course_name, utme_score, grades, }
         })
         return response.data
     } catch (error) {
@@ -50,7 +50,7 @@ export const fetchPostUtmeRequirements = async (course_name, utme_score, grades)
 export const fetchCourseAggregate = async (course_name) => {
     try {
         const response = await axios.get(`${BASE_URL}/aggregates/requirements`, {
-            params: { course_name }
+            params: { course_name, university_name: "Obafemi Awolowo University (OAU)" }
         });
         return response.data;
     } catch (error) {
