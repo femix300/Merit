@@ -9,14 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* Navbar styling */
+            /* Navbar styling */
             .navbar {
                 background-color: #6b2dcc; /* Adjusted to match the image color */
                 color: white;
                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                padding: 20px 0; /* Increased padding for better spacing */
+                padding: 20px 0; /* Padding for better spacing */
+                position: fixed; /* Fix the navbar to the top */
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000; /* Ensure the navbar stays above other content */
             }
-    
+        
             .navbar-container {
                 max-width: 1200px;
                 margin: 0 auto;
@@ -130,7 +135,7 @@
             }
     
             .mobile-dropdown-btn:hover {
-                background-color: #4c38be;
+                background-color: #6b2dcc;
             }
     
             .mobile-dropdown-content a:hover {
@@ -158,41 +163,43 @@
                 }
             }
     
-           /* General styles */
+            /* Adjust the overall body to accommodate the fixed navbar */
             body {
-                font-family: 'M PLUS 1', sans-serif;
-                background-color: white; /* Set the body background to white */
+                margin: 0;
+                padding: 0;
+                padding-top: 80px; /* Add padding to ensure body content doesn't overlap with navbar */
+                font-family: 'Inter', sans-serif;
+                background-color: white;
+                color: black;
                 display: flex;
-                flex-direction: column;
                 justify-content: center;
+                flex-direction: column;
                 align-items: center;
                 height: 100vh;
-                margin: 0;
-                color: black; /* Set default text color to black */
             }
     
-            /* Chat container */
             .chat-container {
                 width: 900px;
                 height: 80vh;
-                background-color: #5c48ee; /* Background color of the chat container */
+                background-color: #6b2dcc; /* Background color of the chat container */
                 border-radius: 10px;
                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
                 padding: 20px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                color: black; /* Set text color inside chat container to black */
+                color: black;
+                margin-top: 120px; /* Add margin to push it below the navbar */
             }
     
-            /* Message area styling */
+            /* Ensure message-area has proper margin */
             .message-area {
                 flex-grow: 1;
                 overflow-y: auto;
                 margin-bottom: 20px;
                 padding: 10px;
                 border-radius: 10px;
-                background-color: #f9f9f9; /* Light background for the message area */
+                background-color: #f9f9f9;
             }
     
             /* Message bubble */
@@ -200,7 +207,6 @@
                 margin: 10px 0;
                 padding: 10px;
                 border-radius: 20px;
-                font-size: 14px;
                 max-width: 75%;
                 word-wrap: break-word;
                 box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
@@ -242,13 +248,11 @@
                 max-height: 120px; /* Set a maximum height */
                 line-height: 1.5; /* Control the line height for better spacing */
                 transition: height 0.2s ease; /* Smooth transition for height change */
-                height: auto;
-                min-height: 16px;
             }
     
             button {
                 padding: 10px 20px;
-                background-color:  black; /* Dark Slate Gray button color */
+                background-color: black; /* Dark Slate Gray button color */
                 color: white; /* Button text color */
                 border: none;
                 border-radius: 20px;
@@ -268,6 +272,148 @@
                 font-style: italic;
             }
 
+
+            /* Footer Styling */
+            .footer {
+                background-color: #2d3748; /* bg-gray-800 equivalent */
+                color: #ffffff; /* white */
+                padding: 2rem 0; /* py-8 equivalent */
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            .footer-content {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .footer-section {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+            
+            @media (min-width: 768px) {
+                .footer-section {
+                width: 30%; /* For three equal columns on larger screens */
+                }
+            }
+            
+            .footer-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }
+            
+            .footer-text {
+                color: #a0aec0; /* text-gray-400 */
+            }
+            
+            .footer-links {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .footer-links li {
+                margin-bottom: 0.5rem;
+            }
+            
+            .footer-links a {
+                color: #a0aec0; /* text-gray-400 */
+                text-decoration: none;
+            }
+            
+            .footer-links a:hover {
+                color: #ffffff; /* white on hover */
+            }
+            
+            /* Newsletter Form */
+            .newsletter-form {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            @media (min-width: 768px) {
+                .newsletter-form {
+                flex-direction: row;
+                }
+            }
+            
+            .newsletter-input {
+                padding: 0.5rem;
+                border-radius: 0.375rem;
+                border: none;
+                margin-bottom: 0.5rem;
+                outline: none;
+                flex-grow: 1;
+            }
+            
+            .newsletter-input:focus {
+                box-shadow: 0 0 0 3px #9f7aea; /* focus:ring-purple-500 equivalent */
+            }
+            
+            .newsletter-button {
+                background-color: #6b46c1; /* bg-purple-600 */
+                color: white;
+                padding: 0.5rem 1rem;
+                border: none;
+                border-radius: 0.375rem;
+                cursor: pointer;
+                margin-left: 0.5rem;
+            }
+            
+            .newsletter-button:hover {
+                background-color: #553c9a; /* bg-purple-700 */
+            }
+            
+            /* Footer Bottom */
+            .footer-bottom {
+                text-align: center;
+                margin-top: 2rem;
+            }
+            
+            .footer-bottom p {
+                color: #a0aec0; /* text-gray-400 */
+            }
+            
+            /* Dropdown in Quick Links */
+            .service-dropdown {
+                position: relative;
+            }
+            
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #2d3748;
+                margin-top: 0.5rem;
+                padding: 0.5rem 0;
+                list-style: none;
+                width: 200px;
+                border-radius: 0.375rem;
+            }
+            
+            .service-dropdown:hover .dropdown-content {
+                display: block;
+            }
+            
+            .dropdown-content li {
+                padding: 0.5rem 1rem;
+            }
+            
+            .dropdown-content li a {
+                color: #a0aec0;
+            }
+            
+            .dropdown-content li a:hover {
+                color: white;
+                background-color: #1a202c;
+                border-radius: 0.375rem;
+            }
+            
     </style>
 </head>
 <body>
@@ -280,19 +426,19 @@
             
             <!-- Navigation Links -->
             <nav class="nav-links">
-                <a href="/">Home</a>
+                <a href="http://localhost:5173/">Home</a>
                 <a href="http://127.0.0.1:5000/merit.ai">Merit AI</a>
                 
                 <!-- Dropdown Menu -->
                 <div class="dropdown">
                     <button class="dropdown-btn">Service ▼</button>
                     <div class="dropdown-content">
-                        <a href="/service/aggregate-calculator">Aggregate calculator</a>
-                        <a href="/universities-list">Find dream school</a>
+                        <a href="http://localhost:5173/service/aggregate-calculator">Aggregate calculator</a>
+                        <a href="http://localhost:5173/universities-list">Find dream school</a>
                     </div>
                 </div>
                 
-                <a href="/about">About</a>
+                <a href="http://localhost:5173/about">About</a>
             </nav>
             
             <!-- Mobile Menu Button -->
@@ -318,7 +464,56 @@
             <button id="send-button">Send</button>
         </div>
     </div>
-
+    <footer class="footer bg-gray-800 text-white py-8">
+        <div class="container">
+          <div class="footer-content">
+            <!-- Left Column -->
+            <div class="footer-section about">
+              <h3 class="footer-title">MERIT</h3>
+              <p class="footer-text">
+                Admission Process made seamless with Merit. Helping students make the right choices
+                when it comes to matters pertaining to course and institution.
+              </p>
+            </div>
+      
+            <!-- Middle Column (Quick Links) -->
+            <div class="footer-section quick-links">
+              <h4 class="footer-title">Quick Links</h4>
+              <ul class="footer-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li class="service-dropdown">
+                  <a href="#">Services</a>
+                  <ul class="dropdown-content">
+                    <li><a href="/service/aggregate-calculator">Aggregate calculator</a></li>
+                    <li><a href="/universities-list">Find dream school</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+      
+            <!-- Right Column (Newsletter) -->
+            <div class="footer-section newsletter">
+              <h4 class="footer-title">Subscribe to Our Newsletter</h4>
+              <form class="newsletter-form">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  class="newsletter-input"
+                />
+                <button type="submit" class="newsletter-button">Subscribe</button>
+              </form>
+            </div>
+          </div>
+      
+          <!-- Footer Bottom Section -->
+          <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> Merit. All rights reserved.</p>
+          </div>
+        </div>
+      
+    </footer>
+      
     <script>
         // Toggle mobile dropdown visibility
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -334,7 +529,12 @@
         mobileDropdownBtn.addEventListener('click', function() {
             mobileDropdownContent.classList.toggle('show');
         });
-    
+
+        // This will update the year dynamically
+        const yearSpan = document.getElementById("year");
+        const currentYear = new Date().getFullYear();
+        yearSpan.textContent = currentYear;
+            
 
         const chatBox = document.getElementById("chat-box");
         const userInput = document.getElementById("user-input");
