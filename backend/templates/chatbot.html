@@ -167,30 +167,31 @@
             body {
                 margin: 0;
                 padding: 0;
-                padding-top: 80px; /* Add padding to ensure body content doesn't overlap with navbar */
+                padding-top: 80px; /* Ensure body content doesn't overlap with navbar */
                 font-family: 'Inter', sans-serif;
                 background-color: white;
                 color: black;
                 display: flex;
-                justify-content: center;
-                flex-direction: column;
+                flex-direction: column; /* Added to align flex items in a column */
+                justify-content: space-between; /* Keeps footer at the bottom */
                 align-items: center;
-                height: 100vh;
+                min-height: 100vh; /* Set min-height to fill the viewport */
             }
     
             .chat-container {
-                width: 900px;
-                height: 80vh;
+                width: 100%; /* Make the chatbot cover the full width */
+                height: calc(100vh - 120px); /* Adjust height to account for the space occupied by the header and footer */
                 background-color: #6b2dcc; /* Background color of the chat container */
-                border-radius: 10px;
+                border-radius: 0px;
                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
                 padding: 20px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 color: black;
-                margin-top: 120px; /* Add margin to push it below the navbar */
-            }
+                margin-top: 0; /* Remove top margin to stretch the container */
+                box-sizing: border-box; /* Ensure padding is included in the width and height */
+            }            
     
             /* Ensure message-area has proper margin */
             .message-area {
@@ -207,6 +208,8 @@
                 margin: 10px 0;
                 padding: 10px;
                 border-radius: 20px;
+                font-family: 'M PLUS 1', sans-serif;
+                font-size: 14px;
                 max-width: 75%;
                 word-wrap: break-word;
                 box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
@@ -275,31 +278,35 @@
 
             /* Footer Styling */
             .footer {
-                background-color: #2d3748; /* bg-gray-800 equivalent */
-                color: #ffffff; /* white */
-                padding: 2rem 0; /* py-8 equivalent */
+                background-color: #2d3748; /* Footer background */
+                color: #ffffff; /* White text */
+                padding: 2rem 0; /* Adjust for proper spacing */
+                position: relative; /* Ensure it's placed in document flow */
+                bottom: 0;
+                width: 100%; /* Full width */
+                clear: both;
             }
-            
+
             .container {
                 max-width: 1200px;
                 margin: 0 auto;
                 padding: 0 20px;
             }
-            
+
             .footer-content {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
             }
-            
+
             .footer-section {
                 width: 100%;
                 margin-bottom: 2rem;
             }
-            
+
             @media (min-width: 768px) {
                 .footer-section {
-                width: 30%; /* For three equal columns on larger screens */
+                    width: 30%; /* For three equal columns on larger screens */
                 }
             }
             
@@ -480,13 +487,13 @@
             <div class="footer-section quick-links">
               <h4 class="footer-title">Quick Links</h4>
               <ul class="footer-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
+                <li><a href="http://localhost:5173/">Home</a></li>
+                <li><a href="http://localhost:5173/about">About Us</a></li>
                 <li class="service-dropdown">
                   <a href="#">Services</a>
                   <ul class="dropdown-content">
-                    <li><a href="/service/aggregate-calculator">Aggregate calculator</a></li>
-                    <li><a href="/universities-list">Find dream school</a></li>
+                    <li><a href="http://localhost:5173/service/aggregate-calculator">Aggregate calculator</a></li>
+                    <li><a href="http://localhost:5173/universities-list">Find dream school</a></li>
                   </ul>
                 </li>
               </ul>
