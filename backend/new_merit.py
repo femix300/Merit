@@ -1,8 +1,6 @@
 """Defines a class University"""
-from sqlalchemy.orm import sessionmaker
-from models import Universities, About, Session, session
+from models import Universities, About, session
 import sys
-import pyinputplus as pyip
 from collections import defaultdict
 
 from models import (
@@ -139,7 +137,7 @@ class University:
         """Returns information about a selected university."""
         uni = self.get_uni()
         about = session.query(About).join(Universities).filter(
-            Universities.name == uni.name).first()
+            About.university_id == uni.id).first()
         if about:
             return about
         return None

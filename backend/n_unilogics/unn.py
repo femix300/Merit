@@ -1,5 +1,4 @@
 from new_merit import University
-import pyinputplus as pyip
 
 """Defines the Unn class"""
 
@@ -14,12 +13,12 @@ class Unn(University):
     uni_name = "University of Nigeria, Nsukka (UNN)"
 
     unn_olevel = {
-        "A1": {"value": 72, "index": 1},
-        "B2": {"value": 64, "index": 2},
-        "B3": {"value": 56, "index": 3},
-        "C4": {"value": 48, "index": 4},
-        "C5": {"value": 40, "index": 5},
-        "C6": {"value": 32, "index": 6},
+        "A1": {"value": 90,},
+        "B2": {"value": 80,},
+        "B3": {"value": 70,},
+        "C4": {"value": 60,},
+        "C5": {"value": 50,},
+        "C6": {"value": 40,},
     }
 
     @classmethod
@@ -33,15 +32,17 @@ class Unn(University):
     @classmethod
     def calculate_olevel(cls, grades=[]):
         grade_list = grades.split(',')
+        grade_list.pop()
         total = 0
         for grade in grade_list:
             total += cls.unn_olevel[grade]["value"]
+        total = total + 40 # we added the 40 for Single sitting in UNN, this could be improved later
         return round(total, 3)
 
     @classmethod
     def calculate_aggregate(cls, utme, grades):
-        olevel = Unn.calculate_olevel(grades)
-        aggregate = (olevel * 0.2) + (utme * 0.8)
+        postutme = Unn.calculate_olevel(grades)
+        aggregate = (0.9 * utme) + (0.1 * postutme)
         return round(aggregate, 4)
 
     @classmethod

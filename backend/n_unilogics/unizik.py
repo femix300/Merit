@@ -1,5 +1,4 @@
 from new_merit import University
-import pyinputplus as pyip
 
 """Defines the Unizik class"""
 

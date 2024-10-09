@@ -104,10 +104,12 @@ def calculate_evaluate_recommend():
 
     utme_score = int(utme_score)
 
-    if uni_id in utme_postutme_olevel:
+    if uni_id in utme_postutme_olevel or uni_id in utme_olevel:
         o_level = request.args.get('grades')
         if o_level:
             o_level_grades = o_level.split(',')
+            if grades_needed[uni_id] == 4: # tempoary
+                o_level_grades.pop()
             no_of_grades = grades_needed[uni_id]
             if len(o_level_grades) != no_of_grades:
                 return jsonify({"error": f"Please enter exactly {no_of_grades} grades."}), 400
@@ -330,15 +332,19 @@ def about_university():
     _class_instance = create_class_instance(uni_id)
     about_uni = _class_instance.about_uni()
 
-    result = {
-        "Univerity name": selected_university,
-        "university id": uni_id,
-        "location": about_uni["location"],
-        "established": about_uni["established"],
-        "university description": about_uni["description"]
-    }
+    if about_uni:
 
-    return jsonify(result)
+        result = {
+            "Univerity name": selected_university,
+            "university id": uni_id,
+            "location": about_uni["location"],
+            "established": about_uni["established"],
+            "university description": about_uni["description"]
+        }
+
+        return jsonify(result)
+    
+    return None
 
 
 @app.route('/universities/list/courses', methods=['GET'])
@@ -363,6 +369,7 @@ def display_list_of_courses():
     _class_instance = create_class_instance(uni_id)
 
     courses = list(_class_instance.get_courses().keys())
+    courses = sorted(courses)
 
     result = {
         "Univerity name": selected_university,
@@ -467,13 +474,55 @@ def list_universities():
     """
     uni_list = []
     for uni in universities:
-        if uni["courses"]:
-            uni_list.append(uni["name"])
+        if uni.get("courses"):
+            uni_name = uni.get("name")
+            if uni_name:
+                uni_list.append(uni_name)
+
+    uni_list.sort()
 
     result = {
         "Supported Universities": uni_list
     }
 
+    return jsonify(result)
+
+
+@app.route("/all/universities/courses", methods=['GET'])
+def get_all_universities_and_courses():
+    """
+    Returns a JSON object with all courses offered by all universities.
+
+    For each course offered by a university, it lists the university name and ID.
+
+    Returns:
+        JSON response:
+            - If no courses are available, returns a 404 status code with a message.
+            - Otherwise, returns a 200 status code with a JSON object containing
+              all courses and the universities offering them.
+    """
+    courses_with_universities = {}
+
+    for uni in universities:
+        if uni["courses"]:
+            for course_name in uni["courses"].keys():
+                university_info = {
+                    "university_name": uni["name"],
+                    "university_id": uni["id"]
+                }
+                # If the course is not already in the dictionary, add it
+                if course_name not in courses_with_universities:
+                    courses_with_universities[course_name] = []
+                # Append the university info to the list for the course
+                courses_with_universities[course_name].append(university_info)
+
+    if not courses_with_universities:
+        return jsonify({"message": "No courses available across the universities."}), 404
+
+    result = {
+        "courses": courses_with_universities
+    }
+    
     return jsonify(result)
 
 

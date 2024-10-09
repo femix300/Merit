@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from universities import universities
 from models import session as sql_session
 from new_merit import university_courses_map, uni_classes
 from helper import create_class_instance, uni_dict
@@ -11,13 +10,8 @@ from n_helper import create_class_instance, uni_dict, uni_classes
 
 
 app = Flask(__name__)
+
 CORS(app)
-
-@app.route('/merit', methods=['GET'])
-def use_merit():
-    """Home Page"""
-    return render_template('index.html')
-
 
 @app.route('/universities/courses', methods=['GET'])
 def get_universities_offering_course():
@@ -62,32 +56,6 @@ def get_universities_offering_course():
         "Universities offering the course": uni_list
     }
     return jsonify(result)
-
-
-@app.route('/select_university', methods=['GET'])
-def display_university_selection():
-    return render_template('select_university.html')
-
-
-@app.route('/universities/selected', methods=['GET', 'POST'])
-def select_university():
-    data = request.get_json()
-    university_name = data.get('university_name')
-
-    # store the university name in the session
-    session['selected_university'] = university_name
-
-    return redirect(url_for('list_functions'))
-
-
-@app.route('/merit/functions', methods=['GET'])
-def list_functions():
-    selected_university = session.get('selected_university')
-
-    if not selected_university:
-        return "No university selected", 400
-
-    return render_template('functions.html', university=selected_university)
 
 
 @app.route('/evaluations/recommendations', methods=['POST', 'GET'])
@@ -145,10 +113,12 @@ def calculate_evaluate_recommend():
         if post_utme_score > max_post_utme:
             return jsonify({"error": f"Max post utme score is {max_post_utme}"})
 
-    if uni.utme_postutme_olevel:
+    if uni.utme_postutme_olevel or uni.utme_olevel:
         o_level = request.args.get('grades')
         if o_level:
             o_level_grades = o_level.split(',')
+            if uni.olevel_subjects == 4: # tempoary
+                o_level_grades.pop()
             if len(o_level_grades) != uni.olevel_subjects:
                 return jsonify({"error": f"Please enter exactly {uni.olevel_subjects} grades."}), 400
         else:
@@ -359,16 +329,19 @@ def about_university():
     uni_id = uni_dict[selected_university]
     _class_instance = create_class_instance(uni_id)
     about = _class_instance.about_uni()
+    if about:
 
-    result = {
-        "Univerity name": about.name,
-        "university id": about.id,
-        "location": about.location,
-        "established": about.established,
-        "description": about.description
-    }
+        result = {
+            "Univerity name": about.name,
+            "university id": about.id,
+            "location": about.location,
+            "established": about.established,
+            "university description": about.description
+        }
 
-    return jsonify(result)
+        return jsonify(result)
+    
+    return None
 
 
 @app.route('/universities/list/courses', methods=['GET'])
@@ -392,6 +365,7 @@ def display_list_of_courses():
 
     courses = _class_instance.get_courses()
     courses = [course.name for course in courses]
+    courses = sorted(courses)
 
     result = {
         "Univerity name": selected_university,
@@ -502,12 +476,55 @@ def list_universities():
             if courses:
                 uni_list.append(uni.name)
 
+    uni_list.sort()
+
     result = {
         "Supported Universities": uni_list
     }
 
     return jsonify(result)
 
+@app.route("/all/universities/courses", methods=['GET'])
+def get_all_courses_with_universities():
+    """
+    Returns a list of all courses along with the universities that offer them.
+
+    This endpoint accepts a GET request and returns a JSON response containing
+    each course and a list of universities (with names and IDs) that offer the course.
+
+    Returns:
+        JSON response:
+            - If no universities or courses are found, returns a 404 status code
+              with a message.
+            - Otherwise, returns a 200 status code with a JSON object containing
+              each course and the universities offering it.
+    """
+    courses_with_universities = {}
+
+    for CourseClass in uni_classes.values():  # Loop through all university courses' models
+        # Query all courses along with the corresponding university name
+        courses = sql_session.query(CourseClass, Universities.name).join(Universities, CourseClass.university_id == Universities.id).all()
+
+        if courses:
+            for course, university_name in courses:
+                course_name = course.name
+                university_info = {
+                    "university_name": university_name,
+                    "university_id": course.university_id  # Get university ID from course
+                }
+                # Add course and university info to the dictionary
+                if course_name not in courses_with_universities:
+                    courses_with_universities[course_name] = []
+                courses_with_universities[course_name].append(university_info)
+
+    if not courses_with_universities:
+        return jsonify({"message": "No courses or universities found"}), 404
+
+    result = {
+        "courses": courses_with_universities
+    }
+
+    return jsonify(result)
 
 # AI chatbot
 @app.route("/merit.ai", methods=['GET'])
@@ -523,6 +540,7 @@ def home():
             - The chatbot interface allowing users to enter queries and receive responses.
     """
     return render_template('chatbot.html')
+
 
 
 @app.route("/chat", methods=["POST"])
