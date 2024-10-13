@@ -331,13 +331,14 @@ Retrieves the aggregate requirements for admission into a specific university.
         "aggregate requirements": {
             "aggr_year": "2022/2023",
             "max_jamb_score": 400,
-            "max_post_utme": 400,
-            "method": "utme_olevel",
-            "olevel_subjects": 4,
+            "max_post_utme": 40,
+            "method": "utme_postutme_olevel",
+            "olevel_subjects": 5,
+            "postutme_passmark": 25,
             "require_olevel": true,
-            "sitting": true,
-            "university_id": 3,
-            "university_name": "University of Nigeria, Nsukka (UNN)"
+            "sitting": false,
+            "university_id": 4,
+            "university_name": "Obafemi Awolowo University (OAU)"
         }
     }
 
