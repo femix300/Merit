@@ -10,6 +10,8 @@ from courses.unizik_courses import unizik_courses_
 from courses.uniben_courses import uniben_courses_
 from courses.fuoye_courses import fuoye_courses_
 
+from docs_required import get_aggr_docs
+
 """
 universities is a list of dicationaries that
 contains important info about each university
@@ -22,8 +24,10 @@ universities = [
         "about": about_uni[0],
         "aggr_year": "2021/2022",
         "courses": ui_courses_,
-        "olevel for aggr": False,
+        "require olevel": False,
         "total post utme": 100,
+        "utme postutme": True,
+        "aggr docs": get_aggr_docs(1),
     },
     {
         "id": 2,
@@ -31,8 +35,9 @@ universities = [
         "about": about_uni[1],
         "aggr_year": "2022/2023",
         "courses": unilag_courses_,
-        "olevel for aggr": True,
+        "require olevel": True,
         "total post utme": 30,
+        "aggr docs": get_aggr_docs(2),
     },
     {
         "id": 3,
@@ -40,8 +45,9 @@ universities = [
         "about": about_uni[2],
         "aggr_year": "2022/2023",
         "courses": unn_courses_,
-        "olevel for aggr": True,
-        "total post utme": 400,
+        "require olevel": True,
+        "total post utme": None,
+        "aggr docs": get_aggr_docs(3),
     },
     {
         "id": 4,
@@ -49,8 +55,9 @@ universities = [
         "about": about_uni[3],
         "aggr_year": "2022/2023",
         "courses": oau_courses_,
-        "olevel for aggr": True,
+        "require olevel": True,
         "total post utme": 40,
+        "aggr docs": get_aggr_docs(4),
     },
     {
         "id": 5,
@@ -58,8 +65,9 @@ universities = [
         "about": about_uni[4],
         "aggr_year": None,
         "courses": abu_courses_,
-        "olevel for aggr": None,
+        "require olevel": None,
         "total post utme": None,
+        "aggr docs": get_aggr_docs(5),
     },
     {
         "id": 6,
@@ -67,8 +75,9 @@ universities = [
         "about": about_uni[5],
         "aggr_year": None,
         "courses": unilorin_courses_,
-        "olevel for aggr": None,
+        "require olevel": None,
         "total post utme": None,
+        "aggr docs": get_aggr_docs(6),
     },
     {
         "id": 7,
@@ -76,8 +85,9 @@ universities = [
         "about": about_uni[6],
         "aggr_year": "2022/2023",
         "courses": futa_courses_,
-        "olevel for aggr": False,
+        "require olevel": False,
         "total post utme": 100,
+        "aggr docs": get_aggr_docs(7),
     },
     {
         "id": 8,
@@ -85,8 +95,9 @@ universities = [
         "about": about_uni[7],
         "aggr_year": "2022/2023",
         "courses": unizik_courses_,
-        "olevel for aggr": False,
+        "require olevel": False,
         "total post utme": 100,
+        "aggr docs": get_aggr_docs(8),
     },
     {
         "id": 9,
@@ -94,8 +105,9 @@ universities = [
         "about": about_uni[8],
         "aggr_year": "2022/2023",
         "courses": uniben_courses_,
-        "olevel for aggr": False,
+        "require olevel": False,
         "total post utme": 100,
+        "aggr docs": get_aggr_docs(9),
     },
     {
         "id": 10,
@@ -103,7 +115,12 @@ universities = [
         "about": about_uni[9],
         "aggr_year": None,
         "courses": fuoye_courses_,
-        "olevel for aggr": None,
+        "require olevel": None,
         "total post utme": None,
+        "aggr docs": get_aggr_docs(10),
     },
 ]
+
+# for uni in universities:
+#     print(uni["aggr docs"])
+# print(universities[1]["aggr docs"])

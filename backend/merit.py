@@ -3,6 +3,8 @@ from universities import universities
 from collections import defaultdict
 import sys
 
+MAX_JAMB_SCORE = 400
+
 
 class University:
     universities = universities
@@ -80,6 +82,43 @@ class University:
         else:
             return {}
 
+    def get_aggregate_docs(self):
+        """Gets the aggregate requirment for a specific university"""
+        uni_id = self.get_uni_index()
+        uni = self.universities[uni_id]
+        university_name = uni["name"]
+        uni_id = uni["id"]
+        aggr_year = uni["aggr_year"]
+        max_post_utme = uni["total post utme"]
+        require_olevel = uni["require olevel"]
+        max_jamb_score = MAX_JAMB_SCORE
+        docs = uni["aggr docs"]
+
+        method = docs[0]
+        olevel_subjects = docs[1]
+        sitting = docs[2]
+
+        postutme_passmark = None
+        # the passmark is usually have the total
+        if max_post_utme:
+            postutme_passmark = int(max_post_utme / 2)
+            # for OAU only
+            if uni_id == 4:
+                postutme_passmark = 25
+
+        return {
+            "aggr_year": aggr_year,
+            "max_post_utme": max_post_utme,
+            "postutme_passmark": postutme_passmark,
+            "require_olevel": require_olevel,
+            "max_jamb_score": max_jamb_score,
+            "method": method,
+            "olevel_subjects": olevel_subjects,
+            "sitting": sitting,
+            "university_name": university_name,
+            "university_id": uni_id
+        }
+
     def display_name(self):
         """Prints out the name of a selected university."""
         index = self.get_uni_index()
@@ -106,4 +145,3 @@ class University:
     def exit(self):
         """Exits the program."""
         sys.exit("Thanks for using Merit")
-

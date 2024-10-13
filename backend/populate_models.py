@@ -36,7 +36,7 @@ for uni_data in universities_dict:
         id=uni_data["id"],
         name=uni_data["name"],
         year=uni_data["aggr_year"],
-        olevel_for_aggr=uni_data["olevel for aggr"],
+        olevel_for_aggr=uni_data["require olevel"],
         total_post_utme=uni_data["total post utme"],
     )
     session.add(university)

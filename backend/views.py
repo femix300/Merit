@@ -1,16 +1,25 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 from universities import universities
 from flask_cors import CORS
 from chat_model import history, model
-from helper import uni_dict, not_support_post_utme, utme_olevel, utme_postutme, utme_postutme_olevel, grades_needed, create_class_instance
 
-
+from helper import (
+    uni_dict,
+    not_support_post_utme,
+    utme_olevel,
+    sittings,
+    utme_postutme,
+    utme_postutme_olevel,
+    grades_needed,
+    create_class_instance,
+    check_uni,
+    get_university_instance
+)
 
 app = Flask(__name__)
 
 # Enable CORS for all routes
 CORS(app)
-
 
 
 @app.route('/universities/courses', methods=['GET'])
@@ -78,60 +87,37 @@ def calculate_evaluate_recommend():
               including the course name, course aggregate, student's aggregate, university name,
               university ID, faculty, and other courses the student is qualified for.
     """
+    result = get_university_instance(
+        uni_dict, course=True, utme_score=True, post_utme_score=True, o_level=True, courses=True)
 
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    uni_id = uni_dict[selected_university]
-    index = uni_id - 1
-    max_post_utme = universities[index].get("total post utme")
+    _class_instance = result["class_instance"]
+    utme_score = int(result["utme_score"])
+    course = result["course"]
+    uni_id = result["uni_id"]
+    post_utme_score = result["post_utme_score"]
+    o_level = result["o_level"]
+    sitting = result["sitting"]
 
-    course = request.args.get('course_name')
-    utme_score = request.args.get('utme_score')
-    post_utme_score = request.args.get('post_utme_score')
-
-    if not course:
-        return jsonify({"error": "course_name parameter is required"}), 400
-    if not utme_score:
-        return jsonify({"error": "utme_score parameter is required"}), 400
-    if post_utme_score:
-        post_utme_score = int(post_utme_score)
-        if post_utme_score > max_post_utme:
-            return jsonify({"error": f"Max post utme score is {max_post_utme}"})
-    if not post_utme_score:
-        return jsonify({"error": "post_utme_score parameter is required"}), 400
-
-    utme_score = int(utme_score)
-
-    if uni_id in utme_postutme_olevel or uni_id in utme_olevel:
-        o_level = request.args.get('grades')
-        if o_level:
-            o_level_grades = o_level.split(',')
-            if grades_needed[uni_id] == 4: # tempoary
-                o_level_grades.pop()
-            no_of_grades = grades_needed[uni_id]
-            if len(o_level_grades) != no_of_grades:
-                return jsonify({"error": f"Please enter exactly {no_of_grades} grades."}), 400
-        else:
-            return jsonify({"error": "grades parameter is required"}), 400
-
-    # University Instance
-    _class_instance = create_class_instance(uni_id)
-
-    courses = list(_class_instance.get_courses().keys())
-    if course not in courses:
-        return jsonify({
-            "message": f"The course '{course}' is not offered at {selected_university}. Please select another course."
-        }), 404
-
+    # get student aggregate and course aggregate
     course_aggr = _class_instance.get_course_aggregate(course)
-
     if uni_id in utme_postutme_olevel:
-        stu_aggr = _class_instance.calculate_aggregate(
-            utme_score, post_utme_score, o_level)
+        if uni_id in sittings:
+            stu_aggr = _class_instance.calculate_aggregate(
+                utme_score, post_utme_score, o_level, sitting)
+        else:
+            stu_aggr = _class_instance.calculate_aggregate(
+                utme_score, post_utme_score, o_level)
+
     elif uni_id in utme_olevel:
-        stu_aggr = _class_instance.calculate_aggregate(utme_score, o_level)
+        if uni_id in sittings:
+            stu_aggr = _class_instance.calculate_aggregate(
+                utme_score, o_level, sitting)
+        else:
+            stu_aggr = _class_instance.calculate_aggregate(utme_score, o_level)
+
     else:
         stu_aggr = _class_instance.calculate_aggregate(
             utme_score, post_utme_score)
@@ -164,7 +150,7 @@ def calculate_evaluate_recommend():
         "course": course,
         "course aggregate": course_aggr,
         "student's aggregate": stu_aggr,
-        "university name": selected_university,
+        "university name": result["selected_university"],
         "university id": uni_id,
         "faculty": course_faculty,
         "other courses qualified for": qualified_to_study
@@ -195,47 +181,27 @@ def determine_required_post_utme_score():
             - Otherwise, returns a 200 status code with a JSON object containing the required post-UTME
               score, course name, post-UTME mark, pass mark, university name, and university ID.
     """
+    result = get_university_instance(
+        uni_dict, course=True, utme_score=True, o_level=True, courses=True)
 
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    uni_id = uni_dict[selected_university]
+    _class_instance = result["class_instance"]
+    utme_score = int(result["utme_score"])
+    course = result["course"]
+    uni_id = result["uni_id"]
+    o_level = result["o_level"]
+
     index = uni_id - 1
 
-    course = request.args.get('course_name')
-    utme_score = request.args.get('utme_score')
-
-    if not course:
-        return jsonify({"error": "course_name parameter is required"}), 400
-    if not utme_score:
-        return jsonify({"error": "utme_score parameter is required"}), 400
-
-    utme_score = int(utme_score)
-
-    if uni_id in utme_postutme_olevel:
-        o_level = request.args.get('grades')
-        if o_level:
-            o_level_grades = o_level.split(',')
-            no_of_grades = grades_needed[uni_id]
-            if len(o_level_grades) != no_of_grades:
-                return jsonify({"error": f"Please enter exactly {no_of_grades} grades."}), 400
-        else:
-            return jsonify({"error": "grades parameter is required"}), 400
-
-    # University Instance
-    _class_instance = create_class_instance(uni_id)
-    if course not in _class_instance.get_courses().keys():
-        return jsonify({"error": "course not found"})
-
     post_utme_mark = _class_instance.universities[index]["total post utme"]
-    pass_mark = post_utme_mark / 2
 
     course_aggr = _class_instance.get_course_aggregate(course)
 
     if uni_id in not_support_post_utme:
         return jsonify({
-            "message": f"This feature is currently unavailable for {selected_university}."}), 404
+            "message": f"This feature is currently unavailable for {result['selected_university']}."}), 404
 
     if uni_id in utme_postutme_olevel:
         required_score = _class_instance.calculate_required_post_utme_score(
@@ -249,7 +215,7 @@ def determine_required_post_utme_score():
 
     if required_score is None:
         return jsonify({
-            "message": f"Currently not supported at {selected_university}."}), 404
+            "message": f"Currently not supported at {result['selected_university']}."}), 404
 
     required_score = int(round(required_score))
 
@@ -257,8 +223,8 @@ def determine_required_post_utme_score():
         "course": course,
         "required score": required_score,
         "post utme mark": post_utme_mark,
-        "pass mark": pass_mark,
-        "univeristy name": selected_university,
+        "postutme_passmark": _class_instance.get_aggregate_docs()["postutme_passmark"],
+        "univeristy name": result["selected_university"],
         "university id": uni_id
     }
 
@@ -283,27 +249,21 @@ def get_required_aggregate():
             - Otherwise, returns a 200 status code with a JSON object containing the course name, university name,
               university ID, and the required aggregate score for the course.
     """
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
-    uni_id = uni_dict[selected_university]
+    result = get_university_instance(uni_dict, course=True)
 
-    course = request.args.get('course_name')
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    if not course:
-        return jsonify({"error": "course_name parameter is required"}), 400
+    _class_instance = result["class_instance"]
 
-    # create class instance
-    _class_instance = create_class_instance(uni_id)
-
-    course_aggr = _class_instance.get_course_aggregate(course)
+    course_aggr = _class_instance.get_course_aggregate(result["course"])
     if not course_aggr:
         return jsonify({"error": "course or course aggregate not found"}), 404
 
     result = {
-        "course": course,
-        "university name": selected_university,
-        "university id": uni_id,
+        "course": result["course"],
+        "university name": result["selected_university"],
+        "university id": result["uni_id"],
         "course aggregate": course_aggr
     }
     return jsonify(result)
@@ -322,28 +282,26 @@ def about_university():
             - A JSON object containing the university's name, ID, location, establishment year,
               and description.
     """
-    # selected_university = "Obafemi Awolowo University (OAU)"
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    result = get_university_instance(uni_dict)
 
-    uni_id = uni_dict[selected_university]
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    _class_instance = create_class_instance(uni_id)
+    _class_instance = result["class_instance"]
     about_uni = _class_instance.about_uni()
 
     if about_uni:
 
         result = {
-            "Univerity name": selected_university,
-            "university id": uni_id,
+            "Univerity name": result["selected_university"],
+            "university id": result["uni_id"],
             "location": about_uni["location"],
             "established": about_uni["established"],
             "university description": about_uni["description"]
         }
 
         return jsonify(result)
-    
+
     return None
 
 
@@ -359,21 +317,19 @@ def display_list_of_courses():
         JSON response:
             - A JSON object containing the university's name, ID, and a list of courses offered by the university.
     """
-    # selected_university = "University of Lagos (UNILAG)"
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    result = get_university_instance(uni_dict)
 
-    uni_id = uni_dict[selected_university]
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    _class_instance = create_class_instance(uni_id)
+    _class_instance = result["class_instance"]
 
     courses = list(_class_instance.get_courses().keys())
     courses = sorted(courses)
 
     result = {
-        "Univerity name": selected_university,
-        "university id": uni_id,
+        "Univerity name": result["selected_university"],
+        "university id": result["uni_id"],
         "List of courses": courses
     }
 
@@ -399,27 +355,21 @@ def get_faculty():
               university ID, course name, and the faculty to which the course belongs.
     """
     # selected_university = "Obafemi Awolowo University (OAU)"
-    selected_university = request.args.get('university_name')
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    result = get_university_instance(uni_dict, course=True)
 
-    uni_id = uni_dict[selected_university]
-    course = request.args.get('course_name')
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    if not course:
-        return jsonify({"error": "course_name parameter is required"}), 400
-
-    # create class instance
-    _class_instance = create_class_instance(uni_id)
-    faculty = _class_instance.get_faculty(course)
+    _class_instance = result["class_instance"]
+    faculty = _class_instance.get_faculty(result["course"])
 
     if not faculty:
         return jsonify({"error": "course or faculty not found"}), 404
 
     result = {
-        "university name": selected_university,
-        "university id": uni_id,
-        "course": course,
+        "university name": result["selected_university"],
+        "university id": result["uni_id"],
+        "course": result["course"],
         "faculty": faculty,
     }
 
@@ -439,21 +389,17 @@ def display_faculties_and_courses():
             - A JSON object containing the university's name, ID, and a dictionary where the keys are
               faculty names and the values are lists of courses offered by each faculty.
     """
-    # selected_university = "University of Ibadan (UI)"
-    selected_university = request.args.get('university_name')
+    result = get_university_instance(uni_dict)
 
-    if not selected_university:
-        return jsonify({"error": "university_name parameter is missing"}), 400
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
 
-    uni_id = uni_dict[selected_university]
-
-    # create class instance
-    _class_instance = create_class_instance(uni_id)
+    _class_instance = result["class_instance"]
     faculties_data = _class_instance.get_faculties_and_courses()
 
     result = {
-        "University name": selected_university,
-        "university id": uni_id,
+        "University name": result["selected_university"],
+        "university id": result["uni_id"],
         "faculties and their courses": faculties_data
     }
 
@@ -472,12 +418,8 @@ def list_universities():
         JSON response:
             - A JSON object containing a list of university names that offer courses.
     """
-    uni_list = []
-    for uni in universities:
-        if uni.get("courses"):
-            uni_name = uni.get("name")
-            if uni_name:
-                uni_list.append(uni_name)
+    uni_list = sorted([uni.get("name") for uni in universities if uni.get(
+        "courses") and uni.get("name")])
 
     uni_list.sort()
 
@@ -522,7 +464,35 @@ def get_all_universities_and_courses():
     result = {
         "courses": courses_with_universities
     }
-    
+
+    return jsonify(result)
+
+
+@app.route("/universities/aggregate-requirements", methods=['GET'])
+def get_aggregate_requirements():
+    """
+    Retrieve aggregate requirements for universities.
+
+    This endpoint fetches and returns the aggregate requirements for a specific university.
+
+    Returns:
+        Response: A JSON response containing the aggregate requirements.
+        If the requirements are not available, it returns None.
+    """
+    result = get_university_instance(uni_dict)
+
+    if isinstance(result, tuple) and isinstance(result[0], Response):
+        return result
+
+    _class_instance = result["class_instance"]
+
+    requirment_dict = _class_instance.get_aggregate_docs()
+
+    if not requirment_dict:
+        return None
+    result = {
+        "aggregate requirements": requirment_dict
+    }
     return jsonify(result)
 
 

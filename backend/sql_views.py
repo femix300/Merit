@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 CORS(app)
 
+
 @app.route('/universities/courses', methods=['GET'])
 def get_universities_offering_course():
     """
@@ -90,7 +91,7 @@ def calculate_evaluate_recommend():
     _class_instance = create_class_instance(uni_id)
 
     courses = _class_instance.get_courses()
-  
+
     uni = _class_instance.get_uni()
     max_post_utme = uni.total_post_utme
 
@@ -117,7 +118,7 @@ def calculate_evaluate_recommend():
         o_level = request.args.get('grades')
         if o_level:
             o_level_grades = o_level.split(',')
-            if uni.olevel_subjects == 4: # tempoary
+            if uni.olevel_subjects == 4:  # tempoary
                 o_level_grades.pop()
             if len(o_level_grades) != uni.olevel_subjects:
                 return jsonify({"error": f"Please enter exactly {uni.olevel_subjects} grades."}), 400
@@ -340,7 +341,7 @@ def about_university():
         }
 
         return jsonify(result)
-    
+
     return None
 
 
@@ -484,6 +485,7 @@ def list_universities():
 
     return jsonify(result)
 
+
 @app.route("/all/universities/courses", methods=['GET'])
 def get_all_courses_with_universities():
     """
@@ -503,7 +505,8 @@ def get_all_courses_with_universities():
 
     for CourseClass in uni_classes.values():  # Loop through all university courses' models
         # Query all courses along with the corresponding university name
-        courses = sql_session.query(CourseClass, Universities.name).join(Universities, CourseClass.university_id == Universities.id).all()
+        courses = sql_session.query(CourseClass, Universities.name).join(
+            Universities, CourseClass.university_id == Universities.id).all()
 
         if courses:
             for course, university_name in courses:
@@ -527,6 +530,8 @@ def get_all_courses_with_universities():
     return jsonify(result)
 
 # AI chatbot
+
+
 @app.route("/merit.ai", methods=['GET'])
 def home():
     """
@@ -540,7 +545,6 @@ def home():
             - The chatbot interface allowing users to enter queries and receive responses.
     """
     return render_template('chatbot.html')
-
 
 
 @app.route("/chat", methods=["POST"])

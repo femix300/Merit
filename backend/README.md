@@ -101,10 +101,12 @@ Retrieves a list of universities that offer a specific course. Accepts a query p
 Calculates and evaluates a student's eligibility for a specific course at a selected university. It also recommends other courses within the same faculty for which the student is qualified.
 
 **Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
 - `course_name` (str, required): The name of the course to evaluate.
 - `utme_score` (int, required): The student's UTME score.
-- `post_utme_score` (int, required): The student's post-UTME score.
+- `post_utme_score` (int, required if applicable): The student's post-UTME score.
 - `grades` (str, required if applicable): Comma-separated O-level grades (if required by the university).
+- `sitting` (int, required if applicable): an integer greater than 0
 
 **Response Examples:**
 - `200 OK`:
@@ -134,9 +136,11 @@ Calculates and evaluates a student's eligibility for a specific course at a sele
 Determines the required post-UTME score for a specific course at a selected university. Accepts a GET request with query parameters to calculate the required post-UTME score based on the student's UTME score and, if applicable, O-level grades.
 
 **Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
 - `course_name` (str, required): The name of the course to evaluate.
 - `utme_score` (int, required): The student's UTME score.
 - `grades` (str, required if applicable): Comma-separated O-level grades (if required by the university).
+- `sitting` (int, required if applicable): an integer greater than 0
 
 **Response Examples:**
 - `200 OK`:
@@ -155,6 +159,7 @@ Determines the required post-UTME score for a specific course at a selected univ
 Retrieves the required aggregate score for a specific course at a selected university. Accepts a GET request with a query parameter `course_name` to retrieve the required aggregate score for the specified course.
 
 **Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
 - `course_name` (str, required): The name of the course to retrieve the aggregate score for.
 
 **Response Examples:**
@@ -170,6 +175,9 @@ Retrieves the required aggregate score for a specific course at a selected unive
 ## GET /universities/description
 Retrieves detailed information about a selected university. Accepts a GET request and returns detailed information about the selected university, including its name, ID, location, establishment year, and description.
 
+**Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
+
 **Response Example:**
 - `200 OK`:
   ```json
@@ -184,6 +192,9 @@ Retrieves detailed information about a selected university. Accepts a GET reques
 
 ## GET /universities/list/courses
 Retrieves a list of courses offered by a selected university. Accepts a GET request and returns a list of courses offered by the selected university, along with the university's name and ID.
+
+**Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
 
 **Response Example:**
 - `200 OK`:
@@ -219,6 +230,7 @@ Retrieves a list of courses offered by a selected university. Accepts a GET requ
 Retrieves the faculty of a specific course at a selected university. Accepts a GET request with a query parameter `course_name` to retrieve the faculty to which the specified course belongs at the selected university.
 
 **Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query  parameter.
 - `course_name` (str, required): The name of the course to retrieve the faculty for.
 
 **Response Examples:**
@@ -234,6 +246,9 @@ Retrieves the faculty of a specific course at a selected university. Accepts a G
 
 ## GET /universities/faculties/courses
 Retrieves a list of faculties and their respective courses offered by a selected university. Accepts a GET request and returns a list of faculties and the courses offered under each faculty at the selected university, along with the university's name and ID.
+
+**Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
 
 **Response Example:**
 - `200 OK`:
@@ -292,15 +307,66 @@ This endpoint returns a list of universities currently supported by the applicat
 - `200 OK`:
     ```json
     {
-    "Supported Universities": [
-        "University of Ibadan (UI)",
-        "University of Lagos (UNILAG)",
-        "University of Nigeria, Nsukka (UNN)",
-        "Obafemi Awolowo University (OAU)",
-        "Federal University of Technology, Akure (FUTA)",
-        "Nnamdi Azikiwe University (UNIZIK)",
-        "University of Benin (UNIBEN)"
-    ]
+        "Supported Universities": [
+            "University of Ibadan (UI)",
+            "University of Lagos (UNILAG)",
+            "University of Nigeria, Nsukka (UNN)",
+            "Obafemi Awolowo University (OAU)",
+            "Federal University of Technology, Akure (FUTA)",
+            "Nnamdi Azikiwe University (UNIZIK)",
+            "University of Benin (UNIBEN)"
+        ]
+    }
+
+## GET /universities/aggregate-requirements
+Retrieves the aggregate requirements for admission into a specific university.
+
+**Query Parameters:**
+- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
+
+**Response Examples:**
+- `200 OK`:
+  ```json
+    {
+        "aggregate requirements": {
+            "aggr_year": "2022/2023",
+            "max_jamb_score": 400,
+            "max_post_utme": 400,
+            "method": "utme_olevel",
+            "olevel_subjects": 4,
+            "require_olevel": true,
+            "sitting": true,
+            "university_id": 3,
+            "university_name": "University of Nigeria, Nsukka (UNN)"
+        }
+    }
+
+## GET /all/universities/courses
+Retrieves all courses offered by all universities, along with the universities that offer each course.
+
+**Response Examples:**
+- `200 OK`:
+  ```json
+    {
+        "courses": {
+            "ACCOUNTANCY": [
+            {
+                "university_id": 3,
+                "university_name": "University of Nigeria, Nsukka (UNN)"
+            },
+            {
+                "university_id": 9,
+                "university_name": "University of Benin (UNIBEN)"
+            }
+            ],
+            "ACCOUNTANCY/ACCOUNTING": [
+            {
+                "university_id": 8,
+                "university_name": "Nnamdi Azikiwe University (UNIZIK)"
+            }
+            ],
+            ...
+        }
     }
 
 
