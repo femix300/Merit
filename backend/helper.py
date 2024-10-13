@@ -59,7 +59,7 @@ def create_class_instance(uni_id):
     return _class_instance
 
 
-def get_university_instance(uni_dict, course=None, utme_score=None, post_utme_score=None, o_level=None, courses=None):
+def get_university_instance(uni_dict, course=None, utme_score=None, post_utme_score=None, o_level=None, courses=None, sitting=None):
     """Fetch university instance based on the provided university name."""
     course_ = None
     utme_score_ = None
@@ -118,17 +118,17 @@ def get_university_instance(uni_dict, course=None, utme_score=None, post_utme_sc
                     return jsonify({"error": f"Please enter exactly {no_of_grades} grades."}), 400
             else:
                 return jsonify({"error": "grades parameter is required"}), 400
+    if sitting:
+        if uni_id in sittings:
+            sitting_ = request.args.get('no_of_sitting')
+            if not sitting_:
+                return jsonify({"error": "no_of_sitting parameter is required"}), 400
+            if not sitting_.isdecimal():
+                return jsonify({"error": "no_of_sitting must be a number greater than 0"}), 400
+            if sitting_.isdecimal() and int(sitting_) <= 0:
+                return jsonify({"error": "no_of_sitting must be a number greater than 0"}), 400
 
-    if uni_id in sittings:
-        sitting_ = request.args.get('no_of_sitting')
-        if not sitting_:
-            return jsonify({"error": "no_of_sitting parameter is required"}), 400
-        if not sitting_.isdecimal():
-            return jsonify({"error": "no_of_sitting must be a number greater than 0"}), 400
-        if sitting_.isdecimal() and int(sitting_) <= 0:
-            return jsonify({"error": "no_of_sitting must be a number greater than 0"}), 400
-
-        sitting_ = int(sitting_)
+            sitting_ = int(sitting_)
 
     if courses and course:
         courses_ = list(_class_instance.get_courses().keys())

@@ -88,7 +88,7 @@ def calculate_evaluate_recommend():
               university ID, faculty, and other courses the student is qualified for.
     """
     result = get_university_instance(
-        uni_dict, course=True, utme_score=True, post_utme_score=True, o_level=True, courses=True)
+        uni_dict, course=True, utme_score=True, post_utme_score=True, o_level=True, courses=True, sitting=True)
 
     if isinstance(result, tuple) and isinstance(result[0], Response):
         return result
