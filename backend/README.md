@@ -336,7 +336,7 @@ Retrieves the aggregate requirements for admission into a specific university.
             "olevel_subjects": 5,
             "postutme_passmark": 25,
             "require_olevel": true,
-            "sitting": false,
+            "no_of_sitting": false,
             "university_id": 4,
             "university_name": "Obafemi Awolowo University (OAU)"
         }
