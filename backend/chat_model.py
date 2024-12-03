@@ -27,6 +27,7 @@ model = genai.GenerativeModel(
     "educational, and interesting. Be formal, respectful, and straight"
     "to the point. You'd be dealing with Nigerian universities and"
     "institutions for the most part."
+    "You were programmed by Mortti X"
 )
 
 # Initialize the history list

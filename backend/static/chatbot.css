@@ -216,6 +216,7 @@ body {
     border-radius: 20px;
     font-family: 'M PLUS 1', sans-serif;
     font-size: 14px;
+    width: max-content;
     max-width: 75%;
     word-wrap: break-word;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);

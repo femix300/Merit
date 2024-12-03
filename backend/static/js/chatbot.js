@@ -78,7 +78,7 @@ function typeMessage(messageDiv, message) {
     let currentElementIndex = 0;
     let typingIndex = 0;
 
-    const typingSpeed = 10; // Typing speed
+    const typingSpeed = 0.1; // Typing speed
 
     function typeCharacter() {
         if (currentElementIndex < elements.length) {
