@@ -1,0 +1,7 @@
+SQLAlchemy==2.0.35
+PyMySQL==1.1.1
+PyInputPlus==0.2.12
+google-generativeai==0.8.2
+Flask==3.0.3
+Flask-Cors==5.0.0
+google-ai-generativelanguage==0.6.10

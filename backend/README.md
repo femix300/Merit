@@ -26,21 +26,38 @@ This project offers APIs to help students evaluate their scores for university a
 - CSS
 - JavaScript
 
-## Installation
+# Project Setup
 
-### Prerequisites
+## Prerequisites
+Before running this project, ensure you have Python 3.10+ installed on your system. It is also recommended to use a virtual environment for managing dependencies.
 
-Before you can run the project, ensure that you have the following installed:
+## Required Packages
+The following packages are required for this project:
 
-1. **Python 3.8+** - [Install Python](https://www.python.org/downloads/)
-2. **Flask** - [Flask Installation](https://flask.palletsprojects.com/en/2.0.x/installation/)
-3. **MySQL** - [Install MySQL](https://dev.mysql.com/downloads/)
+- **Flask**: Web framework  
+- **Flask-Cors**: Extension for handling Cross-Origin Resource Sharing (CORS) in Flask  
+- **SQLAlchemy**: ORM for database interaction  
+- **Flask-SQLAlchemy**: Extension for using SQLAlchemy with Flask  
+- **PyMySQL**: MySQL database connector  
+- **PyInputPlus**: A library for handling user input validation  
+- **google-generativeai**: SDK for interacting with Google Generative AI APIs  
+- **google-ai-generativelanguage**: SDK for accessing Google's generative language models  
+
+## Installation Steps
+
+### 1. Create a Virtual Environment (Optional but Recommended)
+Run the following command to create and activate a virtual environment:
+
+#### Linux/macOS
+```bash
+python -m venv venv
+source venv/bin/activate
 
 ### Step 1: Clone the Repository
 
 ```bash
 git clone git clone https://github.com/your_username/Merit.git
-cd Merit-backend-NG_version
+cd Merit-backend
 ```
 
 
