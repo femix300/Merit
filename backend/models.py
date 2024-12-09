@@ -16,7 +16,7 @@ DB_NAME = getenv('DB_NAME')
 Base = declarative_base()
 
 engine = create_engine(
-    f"mysql+pymysql://{'admin'}:{'DoNa_ld99DonALD87'}@{'new-merit.cj2s6g24wg3p.eu-north-1.rds.amazonaws.com'}:{PORT}/{DB_NAME}")
+    f"mysql+pymysql://{USERNAME}:{PASSWORD}@{ADDRESS}:{PORT}/{DB_NAME}")
 
 SessionFactory = sessionmaker(bind=engine)
 
