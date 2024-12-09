@@ -2,8 +2,8 @@ const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8">
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-between items-center">
-          <div className="w-full md:w-1/3 mb-6 md:mb-0">
+        <div className="flex max-xl:flex-wrap  justify-between items-center ">
+          <div className="w-full  mb-6 md:mb-0">
             <h3 className="text-lg font-bold">MERIT</h3>
             <p className="text-gray-400">
               Admission Process made seamless with Merit. Helping students make
@@ -11,8 +11,8 @@ const Footer = () => {
               and institution.
             </p>
           </div>
-          <div className="w-full md:w-1/3 mb-6 md:mb-0">
-            <h4 className="font-semibold mb-2">Quick Links</h4>
+          <div className="w-full  md:text-center  mb-6 md:mb-0">
+            <h4 className="font-semibold mb-2 mt-6">Quick Links</h4>
             <ul className="text-gray-400">
               <li className="hover:text-white">
                 <a href="/">Home</a>
@@ -28,18 +28,18 @@ const Footer = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mt-2 space-y-2"
+                  className="mt-0 space-y-2"
                 >
                   <a
                     href="/service/aggregate-calculator"
-                    className="block text-gray-700 hover:text-gray-100"
+                    className="block text-gray-400 hover:text-gray-100"
                   >
                     Aggregate calculator
                   </a>
 
                   <a
                     href="/universities-list"
-                    className="block text-gray-700 hover:text-gray-100 "
+                    className="block text-gray-400 hover:text-gray-100 "
                   >
                     Find dream school
                   </a>
@@ -47,7 +47,7 @@ const Footer = () => {
               </div>
             </ul>
           </div>
-          <div className="w-full md:w-1/3 mb-6 md:mb-0">
+          <div className="w-full  mb-6 md:mb-0">
             <h4 className="font-semibold mb-2">Subscribe to Our Newsletter</h4>
             <form className="flex flex-col md:flex-row">
               <input
@@ -57,7 +57,7 @@ const Footer = () => {
               />
               <button
                 type="submit"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md"
+                className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-md"
               >
                 Subscribe
               </button>
