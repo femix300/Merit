@@ -1,3 +1,4 @@
 # Exclude environment files
 .env
 *.env
+*.sql
