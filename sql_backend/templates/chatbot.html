@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <div class="logo">
+                <a href="http://localhost:5173/">Merit.com</a>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="nav-links">
+                <a href="http://localhost:5173/">Home</a>
+                <a href="http://127.0.0.1:5000/merit.ai">Merit AI</a>
+                
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="dropdown-btn">
+                        Service <span class="arrow" style="font-size: 0.95em;">▾</span>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="http://localhost:5173/service/aggregate-calculator">Aggregate calculator</a>
+                        <a href="http://localhost:5173/universities-list">Find dream school</a>
+                    </div>
+                </div>
+                
+                <a href="http://localhost:5173/about">About</a>
+            </nav>
+            
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+        
+        <!-- Mobile Dropdown for Mobile View -->
+        <div class="mobile-dropdown" id="mobileDropdown">
+            <a href="/">Home</a>
+            <a href="http://127.0.0.1:5000/merit.ai">Merit AI</a>
+            <button class="mobile-dropdown-btn">Service ▼</button>
+            <div class="mobile-dropdown-content">
+                <a href="/service/aggregate-calculator">Aggregate calculator</a>
+                <a href="/universities-list">Find dream school</a>
+            </div>
+            <a href="/about">About</a>
+        </div>
+    </header>
+    <div class="chat-container">
+        <div class="message-area" id="chat-box"></div>
+        <div class="input-area">
+            <textarea id="user-input" rows="1" placeholder="Type your message here..." style="resize: none;"></textarea>
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <footer class="footer bg-gray-800 text-white py-8">
+        <div class="container">
+          <div class="footer-content">
+            <!-- Left Column -->
+            <div class="footer-section about">
+              <h3 class="footer-title">MERIT</h3>
+              <p class="footer-text">
+                Admission Process made seamless with Merit. Helping students make the right choices
+                when it comes to matters pertaining to course and institution.
+              </p>
+            </div>
+      
+            <!-- Middle Column (Quick Links) -->
+            <div class="footer-section quick-links">
+              <h4 class="footer-title">Quick Links</h4>
+              <ul class="footer-links">
+                <li><a href="http://localhost:5173/">Home</a></li>
+                <li><a href="http://localhost:5173/about">About Us</a></li>
+                <li class="service-dropdown">
+                  <a href="#">Services</a>
+                  <ul class="dropdown-content">
+                    <li><a href="http://localhost:5173/service/aggregate-calculator">Aggregate calculator</a></li>
+                    <li><a href="http://localhost:5173/universities-list">Find dream school</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+      
+            <!-- Right Column (Newsletter) -->
+            <div class="footer-section newsletter">
+              <h4 class="footer-title">Subscribe to Our Newsletter</h4>
+              <form class="newsletter-form">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  class="newsletter-input"
+                />
+                <button type="submit" class="newsletter-button">Subscribe</button>
+              </form>
+            </div>
+          </div>
+      
+          <!-- Footer Bottom Section -->
+          <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> Merit. All rights reserved.</p>
+          </div>
+        </div>
+      
+    </footer>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>
