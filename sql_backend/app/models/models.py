@@ -6,11 +6,11 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import (
     sessionmaker, declarative_base, relationship, scoped_session)
 
-USERNAME = getenv('MYSQLUSER')
-ADDRESS = getenv('MYSQLHOST')
-PASSWORD = getenv('MYSQLPASSWORD')
-PORT = getenv('MYSQLPORT')
-DB_NAME = getenv('MYSQLDATABASE')
+USERNAME = getenv('DB_USERNAME')
+ADDRESS = getenv('DB_ADDRESS')
+PASSWORD = getenv('DB_PASSWORD')
+PORT = getenv('DB_PORT')
+DB_NAME = getenv('DB_NAME')
 
 Base = declarative_base()
 
