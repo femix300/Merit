@@ -1,153 +1,251 @@
-
 # Merit API
 
-This project is a backend system for the **Merit** web application, which was built to aid students in their admission process into tetiary Institutions. 
+**Merit API** is the backend system for the **Merit** web application. It is designed to assist students in navigating the university admission process by evaluating scores, determining course eligibility, and providing alternative course recommendations based on their performance.
+
+---
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
+- [Features](#features)
 - [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Running the Project](#running-the-project)
+- [Project Setup](#project-setup)
+  - [Prerequisites](#prerequisites)
+  - [Installation Steps](#installation-steps)
+  - [Environment Variables](#environment-variables)
+  - [Local Deployment (Limitations)](#local-deployment-limitations)
+  - [Frontend Integration](#frontend-integration)
 - [API Endpoints](#api-endpoints)
-- [Additional Information](#additional-information)
+- [Frontend Integration](#frontend-integration)
+- [Logging & Debugging](#logging--debugging)
+- [Future Enhancements](#future-enhancements)
+- [Remote MySQL Access](#remote-mysql-access)
+- [Contribution Guidelines](#contribution-guidelines)
+- [Contact](#contact)
+
+---
 
 ## Project Overview
 
-This project offers APIs to help students evaluate their scores for university admissions, determine whether they qualify for their chosen course, and get recommendations for other courses they might be eligible for based on their performance.
+Merit API serves as the backbone for a university admission assistance platform. It provides students with tools to:
+
+- Evaluate their scores for university admissions.
+- Verify qualification for chosen courses.
+- Receive recommendations for alternative courses within the same faculty, based on performance metrics.
+- Interact with an AI-powered chatbot for additional admissions-related queries.
+
+This backend system is built with scalability, maintainability, and production readiness in mind, demonstrating strong backend engineering practices.
+
+---
+
+## Features
+
+- **Score Evaluation:** Calculate and evaluate student scores for admission.
+- **Course Eligibility Check:** Determine if a student qualifies for a chosen course.
+- **Alternative Recommendations:** Suggest other courses within the same faculty.
+- **AI Chatbot Interface:** Utilize Google Generative AI for an interactive chatbot experience.
+- **Structured API Design:** Expose well-documented RESTful API endpoints for integrations.
+
+---
 
 ## Technologies Used
 
-- Python (Flask)
-- MySQL (Database)
-- SQLAlchemy (ORM)
-- Flask RESTful APIs
-- HTML
-- CSS
-- JavaScript
+- **Backend Framework:** Python (Flask)
+- **Database:** MySQL, hosted on Railway in production.
+- **ORM:** SQLAlchemy for efficient database interactions.
+- **API Design:** Flask RESTful APIs
+- **Production Server:** Gunicorn
+- **CORS:** Flask-Cors for handling Cross-Origin Resource Sharing
+- **Frontend Assets:** HTML, CSS, JavaScript
+- **AI SDKs:**  
+  - `google-generativeai` and `google-ai-generativelanguage` for chatbot functionality.
 
-# Project Setup
+---
 
-## Prerequisites
-Before running this project, ensure you have Python 3.10+ installed on your system. It is also recommended to use a virtual environment for managing dependencies.
+## Project Setup
 
-## Required Packages
-The following packages are required for this project:
+### Prerequisites
 
-- **Flask**: Web framework  
-- **Flask-Cors**: Extension for handling Cross-Origin Resource Sharing (CORS) in Flask  
-- **SQLAlchemy**: ORM for database interaction  
-- **Flask-SQLAlchemy**: Extension for using SQLAlchemy with Flask  
-- **PyMySQL**: MySQL database connector  
-- **PyInputPlus**: A library for handling user input validation  
-- **google-generativeai**: SDK for interacting with Google Generative AI APIs  
-- **google-ai-generativelanguage**: SDK for accessing Google's generative language models  
+- **Python 3.10+** installed on your system.
+- It is recommended to use a virtual environment for dependency management.
+- Git for cloning the repository.
 
-## Installation Steps
+### Installation Steps
 
-### 1. Create a Virtual Environment (Optional but Recommended)
-Run the following command to create and activate a virtual environment:
+#### 1. Clone the Repository
 
-#### Linux/macOS
+```bash
+git clone https://github.com/femix300/Merit.git
+cd sql_backend
+```
+
+#### 2. Create and Activate a Virtual Environment
+
+**Linux/macOS:**
 ```bash
 python -m venv venv
 source venv/bin/activate
-
-### Step 1: Clone the Repository
-
-```bash
-git clone git clone https://github.com/femix300/Merit.git
-cd Merit-backend
 ```
 
-
-### Step 2: Install Dependencies
-
-Install all the required Python packages by running:
+#### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-The `requirements.txt` file includes the necessary dependencies for the project.
+The `requirements.txt` file includes dependencies like Flask, SQLAlchemy, PyMySQL, Gunicorn, and the Google AI SDKs.
 
-#### Key Packages:
+---
 
-- `Flask`: Web framework
-- `SQLAlchemy`: ORM for database interaction
-- `Flask-SQLAlchemy`: Extension for using SQLAlchemy with Flask
-- `PyMySQL`: MySQL database connector
+### Environment Variables
 
-### Step 3: Running the Project
-
-start the Flask development server:
+To configure your environment, you need to set the following variables. You can add them to your shell configuration file (like `~/.bashrc` or `~/.zshrc`) or use a `.env` file.
 
 ```bash
-# Export environment variables and run Flask
+export FLASK_ENV=development
 export FLASK_APP=run.py
-flask run
+export SECRET_KEY=your_secret_key
+export MYSQLHOST=your_mysql_host
+export MYSQLPORT=3306
+export MYSQLUSER=your_mysql_user
+export MYSQLPASSWORD=your_mysql_password
+export MYSQLDATABASE=your_mysql_database
 ```
 
-This will start the server at `http://127.0.0.1:5000/`.
+Load the variables using:
+
+```bash
+source ~/.bashrc  # or source ~/.zshrc
+```
+
+---
+
+### Local Deployment (Limitations)
+
+This project can be run locally to explore the backend structure and codebase. However, **full functionality depends on access to the production database**, which is private. As such, certain features may not work locally without valid database credentials.
+
+#### Steps to Set Up Locally
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/femix300/Merit.git
+   cd sql_backend
+   ```
+
+2. **Set Up a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # For Linux/macOS
+   venv\Scripts\activate     # For Windows
+   ```
+
+3. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Environment Variables**:
+   Create a `.env` file or use your shell to set the following environment variables:
+   ```bash
+   export FLASK_ENV=development
+   export FLASK_APP=run.py
+   export SECRET_KEY=your_secret_key
+   export MYSQL_HOST=your_mysql_host
+   export MYSQL_PORT=3306
+   export MYSQL_USER=your_mysql_user
+   export MYSQL_PASSWORD=your_mysql_password
+   export MYSQL_DATABASE=your_mysql_database
+   ```
+   **Note**: These values are private, and the backend will not function without valid credentials.
+
+5. **Run the Application**:
+   ```bash
+   flask run or python3 run.py
+   ```
+
+### Production Deployment
+
+For production deployment, the backend is configured to use **Gunicorn** as the WSGI server. Below are the steps to deploy the application:
+
+#### Deployment Steps
+1. **Set Up Hosting Environment**:
+   - Use a cloud provider like Render, Railway, or Heroku for deployment.
+   - Ensure the hosting environment supports Python and has the ability to set environment variables.
+
+2. **Prepare Environment Variables**:
+   - Set the same environment variables used for local development in the hosting provider's dashboard.
+   - Ensure that the `FLASK_ENV` is set to `production`.
+
+3. **Procfile**:
+   - The project includes a `Procfile` for deployment, which specifies the command to run the application:
+     ```text
+     web: gunicorn wsgi:app
+     ```
+
+4. **Install Dependencies**:
+   - The hosting service will automatically install the dependencies listed in `requirements.txt`.
+
+5. **Run the Application**:
+   - When deployed, the application will run on the hosting provider’s specified domain (e.g., `https://merit-uc58.onrender.com`).
+
+#### Example Deployment Command (Gunicorn)
+To simulate the production environment locally, you can use the following command:
+```bash
+gunicorn wsgi:app
+```
+
+This simulates how the application will run in production using Gunicorn as the WSGI server.
+
+---
+
+#### Testing the API
+If you do not have access to the database, you can still explore the codebase and learn about the endpoints described below. For full functionality, please reach out to the repository owner.
+
+---
 
 ## API Endpoints
 
-The backend exposes several endpoints that the frontend developers can interact with:
+### GET /universities/courses
 
-## GET /universities/courses
-Retrieves a list of universities that offer a specific course. Accepts a query parameter `course_name` and returns a JSON object containing the course name and a list of universities offering the course.
-
-**Query Parameters:**
-- `course_name` (str, required): The name of the course to search for.
-
-**Response Examples:**
-- `200 OK`:
+- **Purpose:** Retrieve a list of universities offering a specific course.
+- **Query Parameter:**  
+  - `course_name` (string, required)
+- **Example Response:**
   ```json
-    {
-        "Universities offering the course": [
-            "University of Ibadan (UI)",
-            "University of Lagos (UNILAG)",
-            "University of Nigeria, Nsukka (UNN)",
-            "Obafemi Awolowo University (OAU)",
-            "University of Benin (UNIBEN)"
-        ],
-        "course": "LAW"
-    }
+  {
+      "Universities offering the course": [
+          "University of Ibadan (UI)",
+          "University of Lagos (UNILAG)",
+          "University of Nigeria, Nsukka (UNN)"
+      ],
+      "course": "LAW"
+  }
+  ```
 
-## POST, GET /evaluations/recommendations
-Calculates and evaluates a student's eligibility for a specific course at a selected university. It also recommends other courses within the same faculty for which the student is qualified.
+### POST, GET /evaluations/recommendations
 
-**Query Parameters:**
-- `university_name` (str, required): The name of the university for which to retrieve the aggregate requirements. This must be passed as a query parameter.
-- `course_name` (str, required): The name of the course to evaluate.
-- `utme_score` (int, required): The student's UTME score.
-- `post_utme_score` (int, required if applicable): The student's post-UTME score.
-- `grades` (str, required if applicable): Comma-separated O-level grades (if required by the university).
-- `no_of_sitting` (int, required if applicable): an integer greater than 0
-
-**Response Examples:**
-- `200 OK`:
+- **Purpose:** Calculate and evaluate a student's eligibility for a course and provide recommendations for other courses.
+- **Query Parameters:**  
+  - `university_name` (string, required)
+  - `course_name` (string, required)
+  - `utme_score` (int, required)
+  - `post_utme_score` (int, required if applicable)
+  - `grades` (string, required if applicable)
+  - `no_of_sitting` (int, required if applicable)
+- **Example Response:**
   ```json
-    {
-        "University's name": "Obafemi Awolowo University (OAU)",
-        "course": "ECONOMICS",
-        "course aggregate": 70.38,
-        "faculty": "SOCIAL SCIENCES",
-        "other courses qualified for": {
-            "BROADCAST JOURNALISM": 51.45,
-            "DEMOGRAPHY AND SOCIAL STATISTICS": 53.75,
-            "ENTREPRENEURSHIP": 52.53,
-            "FILM PRODUCTION": 60.23,
-            "GEOGRAPHY": 52.53,
-            "INFORMATION SCIENCE AND MEDIA STUDIES": 50,
-            "MASS COMMUNICATION": 71.05,
-            "POLITICAL SCIENCE": 68.33,
-            "PSYCHOLOGY": 63.83,
-            "SOCIOLOGY": 51.3
-        },
-        "student's aggregate": 82.78,
-        "university id": 4
-    }
+  {
+      "University's name": "Obafemi Awolowo University (OAU)",
+      "course": "ECONOMICS",
+      "course aggregate": 70.38,
+      "faculty": "SOCIAL SCIENCES",
+      "other courses qualified for": {
+          "BROADCAST JOURNALISM": 51.45,
+          "MASS COMMUNICATION": 71.05
+      },
+      "student's aggregate": 82.78,
+      "university id": 4
+  }
+  ```
 
 ## GET /post-utme/requirements
 Determines the required post-UTME score for a specific course at a selected university. Accepts a GET request with query parameters to calculate the required post-UTME score based on the student's UTME score and, if applicable, O-level grades.
@@ -170,7 +268,6 @@ Determines the required post-UTME score for a specific course at a selected univ
       "univeristy name": "Federal University of Technology, Akure (FUTA)",
       "university id": 7
   }
-
 
 ## GET /aggregates/requirements
 Retrieves the required aggregate score for a specific course at a selected university. Accepts a GET request with a query parameter `course_name` to retrieve the required aggregate score for the specified course.
@@ -383,7 +480,7 @@ Retrieves all courses offered by all universities, along with the universities t
                 "university_name": "Nnamdi Azikiwe University (UNIZIK)"
             }
             ],
-            ...
+
         }
     }
 
@@ -403,16 +500,43 @@ Handles user input and provides AI chatbot responses.
 
 This endpoint accepts user messages through a POST request, interacts with an AI model, and returns the chatbot's response. The conversation history is stored for reference.
 
+## Frontend Integration
 
-## Additional Information
+The frontend interacts with the API via HTTP requests using JavaScript (e.g., `fetch` or Axios). The production API is hosted at `https://merit-uc58.onrender.com/`.
 
-- **Frontend Integration**: The frontend can interact with the backend using JavaScript's `fetch()` or Axios for making HTTP requests to the Flask API.
+---
 
-If you have any questions or issues, feel free to contact the project maintainers.
+## Logging & Debugging
 
-Peter Ajimoti
-email: oluwaseyipeter@gmail.com
+- **Local Development:** Logs are displayed in the terminal when `FLASK_ENV=development`.
+- **Production Logs:** Can be monitored via the hosting provider’s dashboard (e.g., Railway or Heroku).
+
+---
+
+## Future Enhancements
+
+- **Automated Testing:** Add unit and integration tests for all endpoints.
+- **Enhanced Chatbot:** Introduce more advanced AI features for user interaction.
+
+---
 
 ## Remote MySQL Access
 
-Currently, the MySQL database is set up locally, and external access is not available by default. 
+The production MySQL database is hosted on Railway. Ensure secure access by setting environment variables appropriately. Local development uses a separate MySQL instance to avoid conflicts.
+
+---
+
+## Contribution
+
+Contributions are welcome!
+
+---
+
+## Contact
+
+For any queries or further information, please reach out:
+
+**Peter Ajimoti**  
+Email: [oluwaseyipeter@gmail.com](mailto:oluwaseyipeter@gmail.com)
+
+---
