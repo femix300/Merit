@@ -13,6 +13,8 @@ def create_app():
     from app.routes.course_routes import course_bp
     from app.routes.evaluation_routes import evaluation_bp
     from app.routes.post_utme_routes import post_utme_bp
+    from app.routes.home_routes import home_bp
+
 
     app.register_blueprint(university_bp)
     app.register_blueprint(aggregate_bp)
@@ -20,5 +22,6 @@ def create_app():
     app.register_blueprint(course_bp)
     app.register_blueprint(evaluation_bp)
     app.register_blueprint(post_utme_bp)
+    app.register_blueprint(home_bp)
 
     return app
