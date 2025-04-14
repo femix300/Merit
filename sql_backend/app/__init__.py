@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+import os
 
 def create_app():
     app = Flask(__name__, template_folder='../templates',
@@ -24,4 +24,20 @@ def create_app():
     app.register_blueprint(post_utme_bp)
     app.register_blueprint(home_bp)
 
+    # Global API KEY middleware
+    @app.before_request
+    def validate_api_key():
+        """
+        Validates API keys
+        """
+        if request.endpoint == 'static':
+            # skip static files
+            return
+        api_key = request.headers.get('x-api-key')
+        valid_api_key = os.getenv('MERIT_API_KEY')
+
+        if api_key != valid_api_key:
+            return jsonify({"error": f"Unauthorized. Invalid or missing API key."}), 401
+
+        
     return app
