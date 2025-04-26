@@ -1,8 +1,74 @@
-# React + Vite
+# Merit Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern frontend application for the MERIT system, helping students determine their eligibility for courses at their dream universities.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The frontend is organized using a feature-based architecture:
+
+```
+src/
+├── assets/           # Images and static assets
+├── components/       # Shared UI components
+├── features/         # Feature-specific modules
+│   ├── aggregate/    # Aggregate score calculation
+│   ├── ai/           # AI assistant functionality
+│   └── universities/ # University search and information
+├── layouts/          # Layout components (Navbar, Footer)
+├── pages/            # Page components
+├── services/         # API and service functions
+└── utils/            # Utility functions
+```
+
+## Technologies Used
+
+- React with React Router
+- Tailwind CSS for styling
+- Framer Motion for animations
+- Axios for API communication
+
+## Features
+
+- University search by course
+- Aggregate score calculation
+- Course recommendations
+- Faculty and course listings
+- University information
+- AI Assistant for student guidance
+
+## Development
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development Server
+
+```bash
+npm run dev
+```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+## API Integration
+
+The frontend communicates with the MERIT backend API to fetch:
+
+- University listings
+- Course information
+- Aggregate calculations
+- Recommendations
+
+## Contributing
+
+Contributions are welcome! Please make sure to follow the project's code style and organization.
+
+## License
+
+This project is part of the MERIT system.

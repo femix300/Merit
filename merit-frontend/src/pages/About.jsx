@@ -1,15 +1,16 @@
 import React from "react";
-import UniversitiesList from "./Universities/UniversitiesList";
+import { Link } from "react-router-dom";
+import UniversitiesList from "../features/universities/UniversitiesList";
 
 function About() {
   return (
     <div className="container flex flex-col mx-auto items-center justify-center max-w-[1200px]">
-      <h1 className="font-extrabold text-2xl py-4"> About Us</h1>
+      <h1 className="font-extrabold text-2xl py-4">About Us</h1>
       <div className="px-3">
-        <p className=" text-start">
+        <p className="text-start">
           At Merit, we are dedicated to empowering students on their educational
           journey. Understanding the complexities of university admissions can
-          be overwhelming, which is why we’ve developed an innovative platform
+          be overwhelming, which is why we've developed an innovative platform
           that simplifies the process.
         </p>
         <p>
@@ -23,10 +24,10 @@ function About() {
         </p>
         <br />
         <br />
-        <p> Join us at Merit, where we turn aspirations into achievements!</p>
-        <a href="/service/aggregate-calculator " className="text-blue-500">
+        <p>Join us at Merit, where we turn aspirations into achievements!</p>
+        <Link to="/service/aggregate-calculator" className="text-blue-500">
           Click Here
-        </a>
+        </Link>
         <br /> <br />
         <UniversitiesList />
       </div>

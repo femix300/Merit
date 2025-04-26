@@ -1,124 +1,216 @@
-import { useState } from "react";
-import { MdArrowDropDown } from "react-icons/md";
-import { motion } from "framer-motion";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesDropdown, setServicesDropdown] = useState(false);
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!isDropdownOpen);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Universities', path: '/universities-list' },
+    { name: 'About', path: '/about' },
+  ];
+
+  const serviceLinks = [
+    { name: 'Aggregate Calculator', path: '/service/aggregate-calculator' },
+    { name: 'Course Faculty', path: '/service/course-faculty' },
+    { name: 'Aggregate Requirements', path: '/service/aggregate-requirements' },
+    { name: 'Post UTME', path: '/service/post-utme' },
+  ];
 
   return (
-    <header className=" bg-blue-950 text-white shadow-lg ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 shadow-md backdrop-blur-sm py-2' 
+          : 'bg-transparent py-4'
+      }`}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="text-xl font-bold">
-            <a href="/">Merit.com</a>{" "}
-          </div>
+          <Link to="/" className="flex items-center">
+            <span 
+              className={`text-2xl font-bold ${
+                isScrolled ? 'text-primary-600' : 'text-white'
+              }`}
+            >
+              MERIT
+            </span>
+          </Link>
 
-          {/* Nav Links */}
-          <nav className="hidden md:flex space-x-8 items-center">
-            <a href="/" className="text-white hover:text-gray-900">
-              Home
-            </a>
-            <a href="http://127.0.0.1:5000/merit.ai" className="text-white hover:text-gray-900">
-              Merit AI
-            </a>
-
-            {/* Service Dropdown */}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link, index) => (
+              <Link
+                key={index}
+                to={link.path}
+                className={`font-medium transition-colors ${
+                  isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white/90 hover:text-white'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            
+            {/* Services Dropdown */}
             <div className="relative">
               <button
-                onClick={toggleDropdown}
-                className="flex items-center text-white hover:text-gray-900 focus:outline-none"
+                onClick={() => setServicesDropdown(!servicesDropdown)}
+                className={`font-medium transition-colors flex items-center ${
+                  isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white/90 hover:text-white'
+                }`}
               >
-                Service <MdArrowDropDown color="#ffffff" className="ml-1 " />
+                Services
+                <svg 
+                  className="w-4 h-4 ml-1" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth="2" 
+                    d="M19 9l-7 7-7-7" 
+                  />
+                </svg>
               </button>
 
-              {/* Dropdown Menu */}
-              {isDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute mt-2 w-48 bg-white shadow-lg rounded-md z-10 overflow-hidden"
-                >
-                  <a
-                    href="/service/aggregate-calculator"
-                    className="block px-4 py-3 text-base text-gray-700 hover:bg-gray-100"
-                  >
-                    Aggregate calculator
-                  </a>
-
-                  <a
-                    href="/universities-list"
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  >
-                    Find dream school
-                  </a>
-                </motion.div>
+              {servicesDropdown && (
+                <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {serviceLinks.map((service, index) => (
+                      <Link
+                        key={index}
+                        to={service.path}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setServicesDropdown(false)}
+                      >
+                        {service.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 
-            <a href="/about" className="text-white hover:text-gray-900">
-              About
-            </a>
-          </nav>
+            <Link 
+              to="/merit-ai"
+              className={`px-5 py-2 rounded-lg font-medium transition-all ${
+                isScrolled 
+                  ? 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'bg-white text-primary-600 hover:bg-white/90'
+              }`}
+            >
+              Merit AI
+            </Link>
+          </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
             <button
-              onClick={toggleDropdown}
-              className="text-gray-700 focus:outline-none"
-            >
-              <MdArrowDropDown size={28} color="#ffffff" />
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`md:hidden ${
+              isScrolled ? 'text-gray-900' : 'text-white'
+            }`}
+          >
+            {mobileMenuOpen ? (
+              <span className="text-2xl">×</span>
+            ) : (
+              <span className="text-2xl">≡</span>
+            )}
             </button>
-          </div>
         </div>
 
         {/* Mobile Menu */}
-        {isDropdownOpen && (
-          <div className="md:hidden">
-            <a
-              href="/"
-              className="block py-2 px-4 text-white hover:bg-gray-100"
-            >
-              Home
-            </a>
-            <div className="block py-2 px-4  text-white hover:bg-gray-100">
-              <span>Service</span>
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mt-2 space-y-2"
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4">
+            <div className="flex flex-col space-y-4">
+              {navLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  to={link.path}
+                  className={`font-medium py-2 ${
+                    isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white hover:text-white/80'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              
+              {/* Services Section */}
+              <div className="py-2">
+                <button
+                  onClick={() => setServicesDropdown(!servicesDropdown)}
+                  className={`font-medium flex items-center ${
+                    isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white hover:text-white/80'
+                  }`}
+                >
+                  Services
+                  <svg 
+                    className="w-4 h-4 ml-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth="2" 
+                      d={servicesDropdown ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} 
+                    />
+                  </svg>
+                </button>
+                
+                {servicesDropdown && (
+                  <div className="ml-4 mt-2 space-y-2">
+                    {serviceLinks.map((service, index) => (
+                      <Link
+                        key={index}
+                        to={service.path}
+                        className={`block py-1 ${
+                          isScrolled ? 'text-gray-600 hover:text-primary-600' : 'text-white/80 hover:text-white'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {service.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <Link 
+                to="/merit-ai"
+                className={`px-5 py-2 rounded-lg font-medium text-center transition-all ${
+                  isScrolled 
+                    ? 'bg-primary-600 text-white hover:bg-primary-700'
+                    : 'bg-white text-primary-600 hover:bg-white/90'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <a
-                  href="/service/aggregate-calculator"
-                  className="block  hover:bg-gray-100"
-                >
-                  Aggregate calculator
-                </a>
-
-                <a
-                  href="/universities-list"
-                  className="block  hover:bg-gray-100"
-                >
-                  Find dream school
-                </a>
-              </motion.div>
+                Merit AI
+              </Link>
             </div>
-            <a
-              href="/about"
-              className="block py-2 px-4 text-white hover:bg-gray-100"
-            >
-              About
-            </a>
           </div>
         )}
       </div>
-    </header>
+    </nav>
   );
 };
 
