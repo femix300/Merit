@@ -83,8 +83,8 @@ const LandingContent = () => {
           <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 text-white">
             {[
               { number: "10+", label: "Universities" },
-              { number: "1000+", label: "Courses" },
-              { number: "98%", label: "Accuracy" },
+              { number: "100+", label: "Courses" },
+              { number: "90%", label: "Accuracy" },
               { number: "24/7", label: "AI Support" }
             ].map((stat, index) => (
               <motion.div
@@ -527,19 +527,19 @@ const LandingContent = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                number: "50,000+",
+                number: "500+",
                 label: "Students Helped",
                 icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
                 color: "primary"
               },
               {
-                number: "95%",
+                number: "90%",
                 label: "Accuracy Rate",
                 icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
                 color: "accent"
               },
               {
-                number: "200+",
+                number: "10+",
                 label: "Universities",
                 icon: "M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z",
                 color: "primary"
@@ -574,8 +574,8 @@ const LandingContent = () => {
               <div className="bg-gray-50 p-8 rounded-xl">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Why Students Choose MERIT</h3>
                 <p className="text-gray-700 mb-6">
-                  MERIT has become the go-to platform for Nigerian students seeking reliable information about university
-                  admissions. Our comprehensive database and advanced algorithms provide students with accurate,
+                  MERIT is a new platform for Nigerian students seeking reliable information about university
+                  admissions. Our growing database and advanced algorithms provide students with accurate,
                   personalized guidance throughout their academic journey.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -621,7 +621,7 @@ const LandingContent = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  <p className="text-xl font-bold">Join 50,000+ satisfied students</p>
+                  <p className="text-xl font-bold">Join 500+ satisfied students</p>
                   <p className="text-sm opacity-90">Who have found their path to academic success with MERIT</p>
                 </div>
               </div>
