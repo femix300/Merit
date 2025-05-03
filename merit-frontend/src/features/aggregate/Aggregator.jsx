@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
-
-const BASE_URL = "http://127.0.0.1:5000";
+import api from "../../services/api";
 
 function Aggregator() {
   const [universities, setUniversities] = useState([]);
@@ -34,8 +32,8 @@ function Aggregator() {
     const fetchUniversities = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${BASE_URL}/universities/list`);
-        const universitiesList = response.data["Supported Universities"] || [];
+        const result = await api.fetchUniversitiesList();
+        const universitiesList = result["Supported Universities"] || [];
         setUniversities(universitiesList);
       } catch (error) {
         console.error("Error fetching universities:", error);
@@ -58,12 +56,12 @@ function Aggregator() {
   // Fetch Post UTME requirements
   const fetchPostUtmeRequirements = async (selectedUniversity) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/post-utme/requirements?university_name=${encodeURIComponent(
-          selectedUniversity
-        )}`
-      );
-      setMaxPostUtmeScore(response.data["post utme mark"]);
+      const result = await api.fetchPostUtmeRequirements({
+        universityName: selectedUniversity,
+        courseName: selectedCourse,
+        utmeScore: utmeScore
+      });
+      setMaxPostUtmeScore(result["post utme mark"]);
     } catch (error) {
       console.error("Error fetching Post UTME requirements:", error);
     }
@@ -79,11 +77,8 @@ function Aggregator() {
     setLoading(true);
     setCourses([]);
     try {
-      const url = `${BASE_URL}/universities/list/courses?university_name=${encodeURIComponent(
-        selectedUniversity
-      )}`;
-      const response = await axios.get(url);
-      setCourses(response.data["List of courses"] || []);
+      const result = await api.fetchCoursesByUniversity(selectedUniversity);
+      setCourses(result["List of courses"] || []);
     } catch (error) {
       console.error("Error fetching courses:", error);
       setError("Failed to load courses");
@@ -181,7 +176,7 @@ function Aggregator() {
       }
 
       // Prepare the grades array
-      const grades = [
+      const gradesArray = [
         formData.olevelResults.mathematics,
         formData.olevelResults.english,
         formData.olevelResults.subject1,
@@ -189,20 +184,16 @@ function Aggregator() {
         formData.olevelResults.subject3,
       ];
 
-      // Construct query parameters
-      const queryParams = new URLSearchParams({
-        course_name: selectedCourse || courses[0],
-        utme_score: utmeScore,
-        post_utme_score: postUtmeScore,
-        grades: grades,
-        university_name: university,
-      }).toString();
+      // Use the API service for recommendations
+      const result = await api.fetchCourseRecommendations({
+        courseName: selectedCourse || courses[0],
+        utmeScore: utmeScore,
+        postUtmeScore: postUtmeScore,
+        grades: gradesArray,
+        universityName: university
+      });
 
-      const response = await axios.get(
-        `${BASE_URL}/evaluations/recommendations?${queryParams}`
-      );
-
-      setData(response.data);
+      setData(result);
     } catch (error) {
       console.error("Error calculating aggregate:", error);
       setError("Something went wrong, please try again.");

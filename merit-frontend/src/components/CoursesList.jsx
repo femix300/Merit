@@ -26,7 +26,7 @@ const CoursesList = () => {
 
   const fetchCourses = async (university_name) => {
     setLoading(true);
-    const BASE_URL = "http://127.0.0.1:5000";
+    const BASE_URL = "https://merit-uc58.onrender.com";
 
     try {
       const response = await fetch(

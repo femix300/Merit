@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./recommendation.css";
 
-const BASE_URL = "http://127.0.0.1:5000";
+const BASE_URL = "https://merit-uc58.onrender.com";
 
 function Aggregator() {
   const [universities, setUniversities] = useState([]); // List of universities

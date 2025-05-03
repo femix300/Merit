@@ -1,16 +1,12 @@
 import axios from 'axios'
 
-// In development, use the Vite proxy configured in vite.config.js
-// In production, use the actual API URL
-const isDevelopment = import.meta.env.MODE === 'development';
+// Always use the production API URL
 const API_KEY = import.meta.env.VITE_API_KEY || '70fdc8133c334bf0912769a6407965cb';
 
-// Using local proxy in development and direct URL in production
-const baseURL = isDevelopment 
-  ? '/api' // This will be proxied to the real server by Vite
-  : (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000');
+// Always use the direct production URL
+const baseURL = 'https://merit-uc58.onrender.com';
 
-console.log(`API using ${isDevelopment ? 'development proxy' : 'production'} mode with baseURL: ${baseURL}`);
+console.log(`API using baseURL: ${baseURL}`);
 
 // Create axios instance
 const apiClient = axios.create({
@@ -22,10 +18,37 @@ const apiClient = axios.create({
   withCredentials: false
 });
 
-// Simple error handler
-const handleError = (error, customMessage) => {
+// Enhanced error handler with better context
+const handleError = (error, customMessage, context = {}) => {
   console.error(customMessage || 'API Error:', error);
-  return Promise.reject(error);
+  
+  let errorMessage = 'An error occurred';
+  
+  // Check for specific error types
+  if (error.response) {
+    // Server responded with error status
+    if (error.response.status === 404) {
+      // Special handling for 404 with course context
+      if (context.courseName) {
+        errorMessage = `Course "${context.courseName}" not found. Please check spelling and try again.`;
+      } else {
+        errorMessage = `Resource not found: ${error.response.config?.url || 'Unknown endpoint'}`;
+      }
+    } else {
+      errorMessage = `Server error: ${error.response.status}`;
+    }
+  } else if (error.request) {
+    // Request was made but no response
+    errorMessage = 'No response received from server';
+  } else {
+    // Other errors
+    errorMessage = error.message;
+  }
+  
+  return Promise.reject({
+    message: errorMessage,
+    originalError: error
+  });
 };
 
 // UNIVERSITIES API
@@ -138,10 +161,15 @@ export const fetchCourseRecommendations = async (params) => {
     if (params.grades) queryParams.grades = params.grades;
     if (params.noOfSitting) queryParams.no_of_sitting = params.noOfSitting;
 
+    console.log(`Fetching recommendations with params:`, queryParams);
+    
     const response = await apiClient.get('/evaluations/recommendations', { params: queryParams });
     return response.data;
   } catch (error) {
-    return handleError(error, 'Error fetching course recommendations:');
+    // Pass course context to the error handler
+    return handleError(error, 'Error fetching course recommendations:', { 
+      courseName: params.courseName
+    });
   }
 };
 

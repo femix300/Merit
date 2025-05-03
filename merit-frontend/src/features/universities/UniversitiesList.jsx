@@ -9,6 +9,7 @@ const UniversitiesList = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     const courseName = searchParams.get("course_name");
@@ -22,14 +23,38 @@ const UniversitiesList = () => {
   const fetchUniversities = async (courseName) => {
     try {
       setLoading(true);
+      setIsTyping(false);
+      setError(""); // Clear any previous errors when starting a new search
       const result = await api.fetchUniversitiesByCourse(courseName);
       setUniversities(result["Universities offering the course"] || []);
-      setCourse(result.course);
+      setCourse(courseName);
     } catch (error) {
       console.error("Error fetching universities:", error);
       setError("Failed to load universities");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Debounced search as user types
+  useEffect(() => {
+    if (!course || course.trim().length < 2 || searchParams.get("course_name")) {
+      return; // Don't search when course is too short or when URL param is set
+    }
+    
+    setIsTyping(true);
+    const debounceTimeout = setTimeout(() => {
+      fetchUniversities(course);
+    }, 500); // 500ms delay after user stops typing
+    
+    return () => clearTimeout(debounceTimeout);
+  }, [course]);
+
+  const handleCourseChange = (e) => {
+    const value = e.target.value;
+    setCourse(value);
+    if (!value.trim()) {
+      setUniversities([]);
     }
   };
 
@@ -39,12 +64,12 @@ const UniversitiesList = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-8"
+        className="text-center mb-8 text-enhancer"
       >
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
           Universities
         </h1>
-        {course && (
+        {searchParams.get("course_name") && course && (
           <p className="text-lg text-gray-600">
             Showing universities offering <span className="font-semibold">{course}</span>
           </p>
@@ -52,62 +77,60 @@ const UniversitiesList = () => {
       </motion.div>
 
       {/* Search Form */}
-      {!searchParams.get("course_name") && (
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Find Universities by Course
-          </h2>
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (course) {
-                fetchUniversities(course);
-              }
-            }}
-            className="flex flex-col md:flex-row gap-4"
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-8 content-card">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          Find Universities by Course
+        </h2>
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (course) {
+              fetchUniversities(course);
+            }
+          }}
+          className="flex flex-col md:flex-row gap-4"
+        >
+          <input
+            type="text"
+            value={course}
+            onChange={handleCourseChange}
+            placeholder="Enter course name..."
+            className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            required
+          />
+          <button
+            type="submit"
+            className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <input
-              type="text"
-              value={course}
-              onChange={(e) => setCourse(e.target.value)}
-              placeholder="Enter course name..."
-              className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-            <button
-              type="submit"
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Search
-            </button>
-          </form>
-        </div>
-      )}
+            Search
+          </button>
+        </form>
+      </div>
 
       {/* Loading State */}
-      {loading && (
+      {(loading || isTyping) && (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
         </div>
       )}
 
       {/* Error State */}
-      {error && !loading && (
+      {error && !loading && !isTyping && (
         <div className="p-4 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
 
       {/* Results */}
-      {!loading && universities.length > 0 && (
+      {!loading && !isTyping && universities.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white rounded-lg shadow-lg overflow-hidden"
+          className="bg-white rounded-lg shadow-lg overflow-hidden content-card"
         >
-          <div className="p-6 bg-blue-50 border-b border-blue-100">
-            <h2 className="text-xl font-semibold text-blue-800">
+          <div className="p-6 bg-primary-50 border-b border-primary-100">
+            <h2 className="text-xl font-semibold text-primary-800">
               Universities offering {course}
             </h2>
             <p className="text-gray-600 mt-1">
@@ -130,7 +153,7 @@ const UniversitiesList = () => {
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-gray-800 font-medium">{university}</span>
-                    <span className="text-blue-600">
+                    <span className="text-primary-600">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                       </svg>
@@ -144,8 +167,8 @@ const UniversitiesList = () => {
       )}
 
       {/* No Results */}
-      {!loading && universities.length === 0 && course && (
-        <div className="text-center p-8 bg-gray-50 rounded-lg">
+      {!loading && !isTyping && universities.length === 0 && course && !searchParams.get("course_name") && (
+        <div className="text-center p-8 bg-white rounded-lg shadow-md content-card">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-12 w-12 mx-auto text-gray-400 mb-4"
@@ -168,7 +191,7 @@ const UniversitiesList = () => {
       )}
 
       {/* Aggregator Promotion */}
-      <div className="mt-12 p-6 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-lg text-white text-center">
+      <div className="mt-12 p-6 bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg shadow-lg text-white text-center">
         <h2 className="text-2xl font-bold mb-3">
           Want to know your chances of admission?
         </h2>
@@ -177,9 +200,9 @@ const UniversitiesList = () => {
         </p>
         <Link
           to="/service/aggregate-calculator"
-          className="inline-block px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+          className="inline-block px-6 py-3 bg-accent-500 text-primary-900 font-semibold rounded-lg shadow-sm hover:bg-accent-400 transition-colors"
         >
-          Try Aggregator Calculator
+          Calculate My Aggregate Now
         </Link>
       </div>
     </div>

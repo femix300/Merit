@@ -7,7 +7,7 @@ function Unipage() {
   const [university_name, setUniversity_name] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const BASE_URL = "http://127.0.0.1:5000";
+  const BASE_URL = "https://merit-uc58.onrender.com";
 
   // Use useLocation to get the current URL
   const location = useLocation();

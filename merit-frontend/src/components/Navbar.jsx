@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,12 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close menus when location changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setServicesDropdown(false);
+  }, [location]);
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Universities', path: '/universities-list' },
@@ -32,23 +40,45 @@ const Navbar = () => {
     { name: 'Post UTME', path: '/service/post-utme' },
   ];
 
+  // Get navbar background style
+  const getNavbarStyle = () => {
+    if (isHomePage) {
+      return isScrolled 
+        ? 'bg-white/90 backdrop-blur-md shadow-soft py-2' 
+        : 'bg-transparent py-4';
+    }
+    return 'bg-white/90 backdrop-blur-md shadow-soft py-2';
+  };
+
+  // Get text color style
+  const getTextColor = (isActive = false) => {
+    if (isHomePage) {
+      if (isScrolled) {
+        return isActive ? 'text-primary-600 font-medium' : 'text-neutral-700 hover:text-primary-600';
+      } else {
+        return isActive ? 'text-white font-medium' : 'text-white/90 hover:text-white';
+      }
+    }
+    return isActive ? 'text-primary-600 font-medium' : 'text-neutral-700 hover:text-primary-600';
+  };
+
+  // Get button style
+  const getButtonStyle = () => {
+    if (isHomePage) {
+      return isScrolled 
+        ? 'bg-accent-500 text-white hover:bg-accent-600 shadow-sm'
+        : 'bg-white text-primary-600 hover:bg-white/90 shadow-sm';
+    }
+    return 'bg-accent-500 text-white hover:bg-accent-600 shadow-sm';
+  };
+
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 shadow-md backdrop-blur-sm py-2' 
-          : 'bg-transparent py-4'
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getNavbarStyle()}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <span 
-              className={`text-2xl font-bold ${
-                isScrolled ? 'text-primary-600' : 'text-white'
-              }`}
-            >
+          <Link to="/" className="flex items-center space-x-2">
+            <span className={`text-2xl font-bold font-display tracking-tight ${isHomePage && !isScrolled ? 'text-white' : 'text-primary-600'}`}>
               MERIT
             </span>
           </Link>
@@ -59,9 +89,7 @@ const Navbar = () => {
               <Link
                 key={index}
                 to={link.path}
-                className={`font-medium transition-colors ${
-                  isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white/90 hover:text-white'
-                }`}
+                className={`text-sm font-medium transition-colors ${getTextColor(location.pathname === link.path)}`}
               >
                 {link.name}
               </Link>
@@ -71,13 +99,11 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setServicesDropdown(!servicesDropdown)}
-                className={`font-medium transition-colors flex items-center ${
-                  isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white/90 hover:text-white'
-                }`}
+                className={`text-sm font-medium transition-colors flex items-center space-x-1 ${getTextColor()}`}
               >
-                Services
+                <span>Services</span>
                 <svg 
-                  className="w-4 h-4 ml-1" 
+                  className="w-4 h-4" 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -92,13 +118,13 @@ const Navbar = () => {
               </button>
 
               {servicesDropdown && (
-                <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
+                <div className="absolute left-0 mt-2 w-56 rounded-xl shadow-elevated bg-white ring-1 ring-neutral-200 focus:outline-none animate-fade-in">
+                  <div className="py-1 rounded-xl overflow-hidden">
                     {serviceLinks.map((service, index) => (
                       <Link
                         key={index}
                         to={service.path}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50"
                         onClick={() => setServicesDropdown(false)}
                       >
                         {service.name}
@@ -111,42 +137,39 @@ const Navbar = () => {
 
             <Link 
               to="/merit-ai"
-              className={`px-5 py-2 rounded-lg font-medium transition-all ${
-                isScrolled 
-                  ? 'bg-primary-600 text-white hover:bg-primary-700'
-                  : 'bg-white text-primary-600 hover:bg-white/90'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${getButtonStyle()}`}
             >
               Merit AI
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-            <button
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}
+            className={`md:hidden p-2 rounded-lg ${isHomePage && !isScrolled ? 'text-white' : 'text-neutral-700'}`}
+            aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? (
-              <span className="text-2xl">×</span>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             ) : (
-              <span className="text-2xl">≡</span>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             )}
-            </button>
+          </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <div className="flex flex-col space-y-4">
+          <div className="md:hidden mt-2 pb-4 rounded-xl overflow-hidden animate-slide-down">
+            <div className={`flex flex-col space-y-2 p-4 ${isHomePage && !isScrolled ? 'bg-neutral-900/70 backdrop-blur-md rounded-xl text-white' : 'bg-white rounded-xl shadow-card'}`}>
               {navLinks.map((link, index) => (
                 <Link
                   key={index}
                   to={link.path}
-                  className={`font-medium py-2 ${
-                    isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white hover:text-white/80'
-                  }`}
+                  className={`py-2.5 px-3 rounded-lg ${location.pathname === link.path ? 'bg-primary-50 text-primary-600 font-medium' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.name}
@@ -157,13 +180,11 @@ const Navbar = () => {
               <div className="py-2">
                 <button
                   onClick={() => setServicesDropdown(!servicesDropdown)}
-                  className={`font-medium flex items-center ${
-                    isScrolled ? 'text-gray-700 hover:text-primary-600' : 'text-white hover:text-white/80'
-                  }`}
+                  className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg"
                 >
-                  Services
+                  <span>Services</span>
                   <svg 
-                    className="w-4 h-4 ml-1" 
+                    className="w-4 h-4" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -178,14 +199,12 @@ const Navbar = () => {
                 </button>
                 
                 {servicesDropdown && (
-                  <div className="ml-4 mt-2 space-y-2">
+                  <div className="mt-1 ml-3 pl-3 border-l-2 border-neutral-200 space-y-1 animate-fade-in">
                     {serviceLinks.map((service, index) => (
                       <Link
                         key={index}
                         to={service.path}
-                        className={`block py-1 ${
-                          isScrolled ? 'text-gray-600 hover:text-primary-600' : 'text-white/80 hover:text-white'
-                        }`}
+                        className="block py-2 px-3 text-sm rounded-lg hover:bg-neutral-100"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {service.name}
@@ -197,11 +216,7 @@ const Navbar = () => {
               
               <Link 
                 to="/merit-ai"
-                className={`px-5 py-2 rounded-lg font-medium text-center transition-all ${
-                  isScrolled 
-                    ? 'bg-primary-600 text-white hover:bg-primary-700'
-                    : 'bg-white text-primary-600 hover:bg-white/90'
-                }`}
+                className="mt-2 bg-accent-500 text-white px-4 py-2.5 rounded-lg text-center font-medium shadow-sm"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Merit AI

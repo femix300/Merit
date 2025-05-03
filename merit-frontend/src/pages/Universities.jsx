@@ -9,7 +9,7 @@ const Universities = () => {
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
 
-  const BASE_URL = "http://127.0.0.1:5000"; // Your API base URL
+  const BASE_URL = "https://merit-uc58.onrender.com"; // Production API base URL
 
   useEffect(() => {
     const courseName = searchParams.get("course_name");
