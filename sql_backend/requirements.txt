@@ -7,3 +7,4 @@ SQLAlchemy==2.0.35
 PyInputPlus==0.2.12
 gunicorn==21.2.0
 cryptography>=40.0.0
+python-dotenv==1.0.1
