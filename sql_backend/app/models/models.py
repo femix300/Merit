@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from os import getenv
 
 from sqlalchemy import (
@@ -5,6 +6,8 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import (
     sessionmaker, declarative_base, relationship, scoped_session)
+
+load_dotenv()
 
 USERNAME = getenv('MYSQLUSER')
 ADDRESS = getenv('MYSQLHOST')
