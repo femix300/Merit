@@ -147,23 +147,23 @@ class FuoyeCourses(BaseUniCourses):
     universities = relationship("Universities", back_populates="fuoye_courses")
 
 
-# # Create the tables
-# if __name__ == '__main__':
-#     try:
-#         # Creates all tables based on the Base models
-#         Base.metadata.create_all(engine)
-#         print("Tables created successfully!")
-#     except Exception as e:
-#         print(f"Error creating tables: {e}")
+# Create the tables
+if __name__ == '__main__':
+    try:
+        # Creates all tables based on the Base models
+        Base.metadata.create_all(engine)
+        print("Tables created successfully!")
+    except Exception as e:
+        print(f"Error creating tables: {e}")
 
-# session = Session()
+#session = Session()
 
-# try:
-#     # Your query/operation here
-#     session.commit()  # Commit the transaction if successful
-# except Exception as e:
-#     # Rollback the transaction if there is any error
-#     session.rollback()
-#     print(f"Error: {e}")
-# finally:
-#     session.close()  # Always close the session when done
+try:
+    # Your query/operation here
+    session.commit()  # Commit the transaction if successful
+except Exception as e:
+    # Rollback the transaction if there is any error
+    session.rollback()
+    print(f"Error: {e}")
+finally:
+    session.close()  # Always close the session when done
