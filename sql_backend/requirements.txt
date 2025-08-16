@@ -8,3 +8,8 @@ PyInputPlus==0.2.12
 gunicorn==21.2.0
 cryptography>=40.0.0
 python-dotenv==1.0.1
+Flask-PyMongo==2.3.0
+Flask-Mail==0.10.0
+Flask-JWT-Extended==4.6.0
+python-dotenv==1.0.1
+Werkzeug==3.0.3

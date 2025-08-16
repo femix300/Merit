@@ -500,6 +500,740 @@ Handles user input and provides AI chatbot responses.
 
 This endpoint accepts user messages through a POST request, interacts with an AI model, and returns the chatbot's response. The conversation history is stored for reference.
 
+
+# USER AUTHENTICATION AND USER PROFILES API Endpoints Documentation
+
+## Table of Contents
+1. [Authentication Routes](#authentication-routes)
+2. [Profile Routes](#profile-routes)
+3. [Admin Routes](#admin-routes)
+4. [Response Format Examples](#response-format-examples)
+5. [Error Handling](#error-handling)
+
+---
+
+## Authentication Routes
+
+### 1. User Signup
+**Endpoint:** `POST /auth/signup`  
+**Permissions:** Public  
+**Description:** Register a new user account
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123",
+  "username": "Mortti X"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "User created, please verify your email"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "Password123",
+    "username": "Mortti X"
+  }'
+```
+
+---
+
+### 2. Email Verification
+**Endpoint:** `GET /auth/verify-email`  
+**Permissions:** Public (requires verification token)  
+**Description:** Verify user email address
+
+**Query Parameters:**
+```
+?token=<verification_token>
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Email verified successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X GET "http://localhost:5000/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 3. Resend Verification Email
+**Endpoint:** `POST /auth/resend-verification`  
+**Permissions:** Public  
+**Description:** Resend email verification link
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Verification email resent"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/resend-verification \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com"}'
+```
+
+---
+
+### 4. User Login
+**Endpoint:** `POST /auth/login`  
+**Permissions:** Public  
+**Description:** Authenticate user, logs them in and returns tokens
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "Password123"
+  }'
+```
+
+---
+
+### 5. Refresh Access Token
+**Endpoint:** `POST /auth/refresh`  
+**Permissions:** Public (requires refresh token)  
+**Description:** Get new access token using refresh token
+
+**Request Body:**
+```json
+{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}'
+```
+
+---
+
+### 6. User Logout
+**Endpoint:** `POST /auth/logout`  
+**Permissions:** Public (client-side handled)  
+**Description:** Logout user (client-side token removal)
+
+**Request Body:** None required
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Logout handled client-side by deleting tokens"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/logout
+```
+
+---
+
+### 7. Request Password Reset
+**Endpoint:** `POST /auth/request-password-reset`  
+**Permissions:** Public  
+**Description:** Send password reset email
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "password reset email sent"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/request-password-reset \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com"}'
+```
+
+---
+
+### 8. Reset Password
+**Endpoint:** `POST /auth/reset-password`  
+**Permissions:** Public (requires reset token)  
+**Description:** Reset user password with token
+
+**Request Body:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "new_password": "NewPassword123"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Password updated successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/auth/reset-password \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "new_password": "NewPassword123"
+  }'
+```
+
+---
+
+### 9. Delete Own Account
+**Endpoint:** `DELETE /auth/delete`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Delete current user's account
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "User account deleted successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X DELETE http://localhost:5000/auth/delete \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 10. Delete User by ID (Admin)
+**Endpoint:** `DELETE /auth/delete-user/<user_id>`  
+**Permissions:** Admin only  
+**Description:** Delete specific user by ID
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Path Parameters:**
+- `user_id`: The MongoDB ObjectId of the user to delete
+
+**Sample Response (Success):**
+```json
+{
+  "message": "User deleted successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X DELETE http://localhost:5000/auth/delete-user/60d5f484f1b2c8b1f8e4a1b2 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 11. Delete Users by Email (Admin)
+**Endpoint:** `DELETE /auth/delete-users-by-email`  
+**Permissions:** Admin only  
+**Description:** Delete all users with specified email
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "1 user(s) with email user@example.com deleted successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X DELETE http://localhost:5000/auth/delete-users-by-email \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com"}'
+```
+
+---
+
+## Profile Routes
+
+### 1. Get User Profile
+**Endpoint:** `GET /profile/`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Get current user's profile information
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Sample Response (Success):**
+```json
+[
+  {
+    "id": "68995de722ddd6581677d7e45etf",
+    "username": "Mortti X",
+    "email": "user@example.com",
+    "verified": true,
+    "is_admin": true,
+    "profile": {
+      "bio": "",
+      "preferences": {},
+      "grades": {
+        "english": "B3",
+        "maths": "A1",
+        "relevantSubjects": [
+          "C6",
+          "B2",
+          "B2"
+        ]
+      },
+      "postUtmeScore": 65,
+      "utmeScore": "304"
+    }
+  }
+]
+```
+
+**Sample cURL:**
+```bash
+curl -X GET http://localhost:5000/profile/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 2. Get All Profiles (Admin)
+**Endpoint:** `GET /profile/all`  
+**Permissions:** Admin only  
+**Description:** Get all user profiles (admin access required)
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Sample Response (Success):**
+```json
+[
+  {
+    "id": "60d5f484f1b2c8b1f8e4a1b2",
+    "username": "user1",
+    "email": "user1@example.com",
+    "verified": true,
+    "is_admin": false,
+    "profile": {
+      "bio": "Student at ABC University",
+      "preferences": {},
+      "grades": {
+        "english": "A1",
+        "maths": "B3",
+        "relevantSubjects": ["A1", "B2", "C4"]
+      },
+      "utmeScore": "320",
+      "postUtmeScore": 75
+    }
+  },
+  {
+    "id": "60d5f484f1b2c8b1f8e4a1b3",
+    "username": "user2",
+    "email": "user2@example.com",
+    "verified": true,
+    "is_admin": false,
+    "profile": {
+      "bio": "",
+      "preferences": {},
+      "grades": {
+        "english": null,
+        "maths": null,
+        "relevantSubjects": []
+      },
+      "utmeScore": null,
+      "postUtmeScore": null
+    }
+  }
+]
+```
+
+**Sample cURL:**
+```bash
+curl -X GET http://localhost:5000/profile/all \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 3. Update Profile
+**Endpoint:** `PATCH /profile/`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Update user's basic profile information
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "profile": {
+    "bio": "Random alien from Mars"
+  }
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "id": "68a0d978y886587456a1766a2963",
+  "username": "Alienman",
+  "email": "user@yexample.com",
+  "verified": true,
+  "is_admin": false,
+  "profile": {
+    "bio": "Random alien from Mars",
+    "preferences": {},
+    "grades": {
+      "maths": null,
+      "english": null,
+      "relevantSubjects": []
+    },
+    "utmeScore": null,
+    "postutmeScore": null
+  }
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X PATCH http://localhost:5000/profile/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile": {
+      "bio": "Random alien from Mars"
+    }
+  }'
+```
+
+---
+
+### 4. Update Academic Information
+**Endpoint:** `PATCH /profile/update-academic-info`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Update user's academic information under profiles
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "grades": {
+    "maths": "B3",
+    "english": "C6",
+    "relevantSubjects": ["A1", "A1", "A1"]
+  },
+  "utmeScore": 369,
+  "postUtmeScore": 42
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Academic info updated successfully"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X PATCH http://localhost:5000/profile/update-academic-info \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "grades": {
+      "maths": "B3",
+      "english": "C6",
+      "relevantSubjects": ["A1", "A1", "A1"]
+    },
+    "utmeScore": 369,
+    "postUtmeScore": 42
+  }'
+```
+
+---
+
+### 5. Delete Profile
+**Endpoint:** `DELETE /profile/`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Delete current user's profile and account
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "account deleted"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X DELETE http://localhost:5000/profile/ \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+### 6. Clear Academic Field
+**Endpoint:** `POST /profile/clear-academic-field`  
+**Permissions:** JWT required (logged-in user)  
+**Description:** Clear specific academic field from profile
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "key": "postutmeScore"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "Academic field 'postutmeScore' cleared"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X POST http://localhost:5000/profile/clear-academic-field \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"key": "postutmeScore"}'
+```
+
+---
+
+## Admin Routes
+
+### 1. Set User as Admin
+**Endpoint:** `PUT /admin/set-admin`  
+**Permissions:** Admin only (JWT required)  
+**Description:** Grant admin privileges to a user
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Request Body:**
+```json
+{
+  "user_id": "60d5f484f1b2c8b1f8e4a1b2"
+}
+```
+
+**Sample Response (Success):**
+```json
+{
+  "message": "User is now an admin"
+}
+```
+
+**Sample cURL:**
+```bash
+curl -X PUT http://localhost:5000/admin/set-admin \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "60d5f484f1b2c8b1f8e4a1b2"}'
+```
+
+---
+
+## Response Format Examples
+
+### Success Response
+```json
+{
+  "message": "Operation completed successfully",
+  "data": {
+    // relevant data object
+  }
+}
+```
+
+### Error Response
+```json
+{
+  "error": "Error message describing what went wrong"
+}
+```
+
+---
+
+## Error Handling
+
+### Common HTTP Status Codes
+
+| Status Code | Description | Example |
+|-------------|-------------|---------|
+| 200 | OK | Successful GET, PATCH, PUT operations |
+| 201 | Created | Successful POST operations (user signup) |
+| 400 | Bad Request | Missing required fields, invalid data |
+| 401 | Unauthorized | Invalid or missing JWT token |
+| 403 | Forbidden | Insufficient permissions (non-admin accessing admin routes) |
+| 404 | Not Found | User not found, resource not found |
+| 500 | Internal Server Error | Server-side errors |
+
+### Common Error Responses
+
+**Missing Required Fields:**
+```json
+{
+  "error": "Email and password are required"
+}
+```
+
+**Invalid Token:**
+```json
+{
+  "error": "Invalid or expired token"
+}
+```
+
+**Insufficient Permissions:**
+```json
+{
+  "error": "Admin access required"
+}
+```
+
+**User Not Found:**
+```json
+{
+  "error": "User not found"
+}
+```
+
+**Invalid User ID Format:**
+```json
+{
+  "error": "Invalid user ID format"
+}
+```
+
+---
+
+## Authentication Headers
+
+For all protected routes, include the JWT token in the Authorization header:
+
+```
+Authorization: Bearer <your_access_token>
+```
+
+**Example:**
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjBkNWY0ODRmMWIyYzhiMWY4ZTRhMWIyIiwiaWF0IjoxNjI0NTYwMDAwLCJleHAiOjE2MjQ1NjM2MDB9.signature
+```
+
+---
+
+## Notes
+
+1. **Base URL:** Replace `http://localhost:5000` with your actual server URL
+2. **Content-Type:** Always include `Content-Type: application/json` header for POST/PATCH/PUT requests
+3. **Token Expiry:** Access tokens have limited lifetime; use refresh token to get new access tokens
+4. **Admin Routes:** Only users with `is_admin: true` can access admin-only endpoints
+5. **User IDs:** All user IDs are MongoDB ObjectIds (24-character hexadecimal strings)
+6. **Email Verification:** Users must verify their email before full account access
+7. **Password Requirements:** Implement client-side password strength validation as needed
+
 ## Frontend Integration
 
 The frontend interacts with the API via HTTP requests using JavaScript (e.g., `fetch` or Axios). The production API is hosted at `https://merit-uc58.onrender.com/`.

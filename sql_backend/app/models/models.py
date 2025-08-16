@@ -156,7 +156,7 @@ class FuoyeCourses(BaseUniCourses):
 #     except Exception as e:
 #         print(f"Error creating tables: {e}")
 
-#session = Session()
+# session = Session()
 
 try:
     # Your query/operation here
