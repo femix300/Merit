@@ -107,9 +107,9 @@ def insert_uni_courses(session, uni_name, uni_class, courses_dict):
         print(f"Successfully inserted courses for {uni_name}.")
     except IntegrityError as e:
         session.rollback()
-        print(
-            f"Failed to insert courses
-            for {uni_name} due to IntegrityError: {e.orig}")
+        print(f"""Failed to insert courses
+        for {uni_name} due to IntegrityError: {e.orig}""")
+
     except Exception as e:
         session.rollback()
         print(f"An error occurred while inserting courses for {uni_name}: {e}")

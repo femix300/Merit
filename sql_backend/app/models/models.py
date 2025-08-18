@@ -16,10 +16,9 @@ PORT = getenv('MYSQLPORT')
 DB_NAME = getenv('MYSQLDATABASE')
 
 Base = declarative_base()
+DATABASE_URL = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{ADDRESS}:{PORT}/{DB_NAME}"
 
-engine = create_engine(
-    f"mysql+pymysql://{USERNAME}:{PASSWORD}@{ADDRESS}:{PORT}/{DB_NAME}"
-)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, echo=False)
 
 SessionFactory = sessionmaker(bind=engine)
 
@@ -158,12 +157,13 @@ class FuoyeCourses(BaseUniCourses):
 
 # session = Session()
 
-try:
-    # Your query/operation here
-    session.commit()  # Commit the transaction if successful
-except Exception as e:
-    # Rollback the transaction if there is any error
-    session.rollback()
-    print(f"Error: {e}")
-finally:
-    session.close()  # Always close the session when done
+
+# try:
+#     # Your query/operation here
+#     session.commit()  # Commit the transaction if successful
+# except Exception as e:
+#     # Rollback the transaction if there is any error
+#     session.rollback()
+#     print(f"Error: {e}")
+# finally:
+#     session.close()  # Always close the session when done

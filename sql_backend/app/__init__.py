@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from .config import Config
+from app.models.models import session
 import os
 
 mongo = PyMongo()
@@ -15,6 +16,11 @@ jwt = JWTManager()
 def create_app():
     app = Flask(__name__, template_folder='../templates',
                 static_folder='../static')
+    
+    @app.teardown_appcontext
+    def shutdown_exception(exception=None):
+        session.remove()
+
 
     app.config.from_object(Config)
 

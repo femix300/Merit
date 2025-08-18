@@ -32,7 +32,7 @@ def get_faculty():
 
     _class_instance = result["class_instance"]
 
-    course = request.args.get('course_name')
+    course = request.args.get('course_name').upper()
 
     if not course:
         return jsonify({"error": "course_name parameter is required"}), 400
